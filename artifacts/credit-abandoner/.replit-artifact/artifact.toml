@@ -1,0 +1,31 @@
+kind = "web"
+previewPath = "/"
+title = "학점 포기자 - 공부 빼고 다 재밌는 사람들의 대결"
+version = "1.0.0"
+id = "artifacts/credit-abandoner"
+router = "path"
+
+[[integratedSkills]]
+name = "react-vite"
+version = "1.0.0"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 21399
+
+[services.development]
+run = "pnpm --filter @workspace/credit-abandoner run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/credit-abandoner", "run", "build" ]
+publicDir = "artifacts/credit-abandoner/dist/public"
+serve = "static"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "21399"
+BASE_PATH = "/"
