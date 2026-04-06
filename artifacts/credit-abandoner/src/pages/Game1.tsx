@@ -3,384 +3,365 @@ import { Link } from 'wouter';
 import { ChevronLeft } from 'lucide-react';
 import { useGame } from '../contexts/GameContext';
 import { motion, AnimatePresence } from 'framer-motion';
-import professorImg from '@assets/image_1775490251058.png';
+import professorNoBg from '../assets/professor_nobg.png';
 
 type GameState = 'IDLE' | 'WAITING' | 'READY' | 'SUCCESS' | 'FAIL' | 'FAKE' | 'END';
 
+/* ─── CSS book component ─────────────────────────────────────────── */
+function AdvancedPhysicsBook({ visible }: { visible: boolean }) {
+  return (
+    <AnimatePresence>
+      {visible && (
+        <motion.div
+          key="book"
+          initial={{ y: 80, opacity: 0, rotate: -8, scale: 0.6 }}
+          animate={{ y: -20, opacity: 1, rotate: -5, scale: 1 }}
+          exit={{ y: 80, opacity: 0, rotate: -12, scale: 0.5 }}
+          transition={{ type: 'spring', stiffness: 420, damping: 22 }}
+          style={{
+            position: 'absolute',
+            left: '22%',
+            top: '30%',
+            zIndex: 10,
+            pointerEvents: 'none',
+            filter: 'drop-shadow(0 8px 24px rgba(0,0,0,0.7))',
+          }}
+        >
+          {/* Book spine + cover */}
+          <div style={{ display: 'flex', height: 110 }}>
+            {/* Spine */}
+            <div style={{
+              width: 14, background: 'linear-gradient(180deg,#1a2a5e,#0d1a3a)',
+              borderRadius: '3px 0 0 3px', border: '1px solid #2a3a6e',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+            }}>
+              <span style={{
+                writingMode: 'vertical-rl', color: '#8aadff',
+                fontSize: 7, fontWeight: 900, letterSpacing: 1,
+              }}>PHYSICS</span>
+            </div>
+            {/* Cover */}
+            <div style={{
+              width: 78,
+              background: 'linear-gradient(160deg,#1e3a7a 0%,#0d1f4a 60%,#091530 100%)',
+              borderRadius: '0 4px 4px 0',
+              border: '1px solid #2a4a8e',
+              borderLeft: 'none',
+              padding: '8px 7px',
+              display: 'flex', flexDirection: 'column', gap: 4,
+            }}>
+              <div style={{
+                background: 'rgba(255,255,255,0.08)',
+                borderRadius: 2, padding: '3px 4px',
+              }}>
+                <div style={{ color: '#c8deff', fontSize: 9, fontWeight: 900, letterSpacing: 0.5 }}>ADVANCED</div>
+                <div style={{ color: '#ffffff', fontSize: 11, fontWeight: 900 }}>PHYSICS</div>
+                <div style={{ color: '#8aadff', fontSize: 7, fontStyle: 'italic' }}>Professional Edition</div>
+              </div>
+              <div style={{ color: '#6a9aff', fontSize: 7, lineHeight: 1.4, opacity: 0.85 }}>
+                E=mc² f=mc³<br/>∇·E=ρ/ε₀<br/>F=ma ΔS≥0
+              </div>
+              <div style={{
+                marginTop: 'auto', height: 2,
+                background: 'linear-gradient(90deg, transparent, #4a7aff, transparent)',
+              }} />
+            </div>
+          </div>
+          {/* Pages edge */}
+          <div style={{
+            position: 'absolute', right: -3, top: 4, bottom: 4,
+            width: 5, background: 'repeating-linear-gradient(180deg,#e8e4d8,#c8c4b8 2px,#e8e4d8 2px)',
+            borderRadius: '0 2px 2px 0',
+          }} />
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+}
+
+/* ─── CSS plushie bear ───────────────────────────────────────────── */
+function PlushieBear({ visible }: { visible: boolean }) {
+  return (
+    <AnimatePresence>
+      {visible && (
+        <motion.div
+          key="bear"
+          initial={{ y: 70, opacity: 0, rotate: 20, scale: 0.4 }}
+          animate={{ y: -10, opacity: 1, rotate: 8, scale: 1 }}
+          exit={{ y: 70, opacity: 0, rotate: 25, scale: 0.4 }}
+          transition={{ type: 'spring', stiffness: 380, damping: 20 }}
+          style={{
+            position: 'absolute',
+            left: '20%',
+            top: '32%',
+            zIndex: 10,
+            pointerEvents: 'none',
+            filter: 'drop-shadow(0 6px 20px rgba(0,0,0,0.6))',
+          }}
+        >
+          <div style={{ position: 'relative', width: 64, height: 70 }}>
+            {/* Ears */}
+            <div style={{ position: 'absolute', top: -6, left: 4, width: 20, height: 20, borderRadius: '50%', background: '#d4a055', border: '2px solid #b8843a' }} />
+            <div style={{ position: 'absolute', top: -6, right: 4, width: 20, height: 20, borderRadius: '50%', background: '#d4a055', border: '2px solid #b8843a' }} />
+            <div style={{ position: 'absolute', top: -3, left: 7, width: 14, height: 14, borderRadius: '50%', background: '#e8b870' }} />
+            <div style={{ position: 'absolute', top: -3, right: 7, width: 14, height: 14, borderRadius: '50%', background: '#e8b870' }} />
+            {/* Head */}
+            <div style={{ position: 'absolute', top: 4, left: 0, right: 0, height: 52, borderRadius: '50%', background: 'radial-gradient(circle at 40% 35%, #e8b870, #c89040)', border: '2px solid #b8843a' }}>
+              {/* Muzzle */}
+              <div style={{ position: 'absolute', bottom: 12, left: '50%', transform: 'translateX(-50%)', width: 26, height: 18, borderRadius: '50%', background: '#f0c880' }}>
+                <div style={{ position: 'absolute', top: 4, left: '50%', transform: 'translateX(-50%)', width: 10, height: 7, borderRadius: '50%', background: '#8b5e20' }} />
+              </div>
+              {/* Eyes */}
+              <div style={{ position: 'absolute', top: 16, left: 11, width: 9, height: 9, borderRadius: '50%', background: '#2a1a0a', boxShadow: '0 0 0 2px #6b4020' }}>
+                <div style={{ position: 'absolute', top: 1, left: 1, width: 3, height: 3, borderRadius: '50%', background: 'white' }} />
+              </div>
+              <div style={{ position: 'absolute', top: 16, right: 11, width: 9, height: 9, borderRadius: '50%', background: '#2a1a0a', boxShadow: '0 0 0 2px #6b4020' }}>
+                <div style={{ position: 'absolute', top: 1, left: 1, width: 3, height: 3, borderRadius: '50%', background: 'white' }} />
+              </div>
+            </div>
+            {/* Label */}
+            <div style={{
+              position: 'absolute', bottom: -16, left: '50%', transform: 'translateX(-50%)',
+              background: '#ff6b9d', color: 'white', fontSize: 10, fontWeight: 900,
+              padding: '2px 8px', borderRadius: 8, whiteSpace: 'nowrap',
+            }}>인형!</div>
+          </div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+}
+
+/* ─── Main game ──────────────────────────────────────────────────── */
 export default function Game1() {
   const { updateScore } = useGame();
 
   const [gameState, setGameState] = useState<GameState>('IDLE');
   const [round, setRound] = useState(1);
   const [score, setScore] = useState(0);
-  const [message, setMessage] = useState("");
   const [reactionMs, setReactionMs] = useState(0);
+  const [zipText, setZipText] = useState('');
 
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const readyTimeRef = useRef<number>(0);
   const gameStateRef = useRef<GameState>('IDLE');
+  const currentRoundRef = useRef(1);
+  const currentScoreRef = useRef(0);
 
-  useEffect(() => { gameStateRef.current = gameState; }, [gameState]);
+  const setState = (s: GameState) => {
+    setGameState(s);
+    gameStateRef.current = s;
+  };
 
-  const startRound = (currentRound: number) => {
-    setGameState('WAITING');
-    gameStateRef.current = 'WAITING';
-    setMessage("가방을 주시하세요...");
+  const startRound = (r: number) => {
+    setState('WAITING');
+    setZipText('');
 
     const baseWait = Math.random() * 3000 + 1500;
-    const waitTime = Math.max(600, baseWait - currentRound * 120);
+    const waitTime = Math.max(600, baseWait - r * 120);
 
     timerRef.current = setTimeout(() => {
-      const isFake = Math.random() < (0.2 + currentRound * 0.03);
+      const isFake = Math.random() < Math.min(0.4, 0.18 + r * 0.025);
       if (isFake) {
-        setGameState('FAKE');
-        gameStateRef.current = 'FAKE';
-        setMessage("...");
+        setState('FAKE');
+        setZipText('..??');
         timerRef.current = setTimeout(() => {
           if (gameStateRef.current === 'FAKE') {
-            startRound(currentRound);
+            startRound(r);
           }
-        }, 1600);
+        }, 1700);
       } else {
-        setGameState('READY');
-        gameStateRef.current = 'READY';
-        setMessage("지금 닫아!!!");
+        setState('READY');
+        setZipText('징~~~~!!!!');
         readyTimeRef.current = Date.now();
-        const reactWindow = Math.max(350, 1000 - currentRound * 55);
+        const window = Math.max(320, 1000 - r * 55);
         timerRef.current = setTimeout(() => {
           if (gameStateRef.current === 'READY') {
-            handleFail("시간 초과!! 교수님이 과제를 꺼냈습니다...", currentRound);
+            triggerFail('시간 초과!! 교수님이 과제를 꺼내셨습니다...', r);
           }
-        }, reactWindow);
+        }, window);
       }
     }, waitTime);
   };
 
+  const triggerFail = (msg: string, _r?: number) => {
+    if (timerRef.current) clearTimeout(timerRef.current);
+    setState('FAIL');
+    setZipText('재수강!!');
+    setTimeout(() => endGame(), 2400);
+  };
+
+  const handleClick = () => {
+    const gs = gameStateRef.current;
+    if (gs === 'WAITING') { triggerFail('너무 일찍 눌렀어요! (재수강ㅠㅠ)'); return; }
+    if (gs === 'FAKE')    { triggerFail('그건 인형이잖아요! (감점!!)');       return; }
+    if (gs === 'READY') {
+      if (timerRef.current) clearTimeout(timerRef.current);
+      const ms = Date.now() - readyTimeRef.current;
+      const pts = Math.max(10, Math.floor(200 - ms / 5));
+      const newScore = currentScoreRef.current + pts;
+      currentScoreRef.current = newScore;
+      setScore(newScore);
+      setReactionMs(ms);
+      setState('SUCCESS');
+      setZipText(`${ms}ms ⚡`);
+
+      const nextRound = currentRoundRef.current + 1;
+      setTimeout(() => {
+        if (nextRound > 10) {
+          endGame();
+        } else {
+          currentRoundRef.current = nextRound;
+          setRound(nextRound);
+          startRound(nextRound);
+        }
+      }, 1300);
+    }
+  };
+
+  const endGame = () => {
+    setState('END');
+    updateScore('game1', currentScoreRef.current);
+  };
+
   const startGame = () => {
+    currentRoundRef.current = 1;
+    currentScoreRef.current = 0;
     setRound(1);
     setScore(0);
     setReactionMs(0);
     startRound(1);
   };
 
-  const handleFail = (msg: string, currentRound?: number) => {
-    if (timerRef.current) clearTimeout(timerRef.current);
-    setGameState('FAIL');
-    gameStateRef.current = 'FAIL';
-    setMessage(msg);
-    setTimeout(() => endGame(score), 2200);
-  };
+  useEffect(() => () => { if (timerRef.current) clearTimeout(timerRef.current); }, []);
 
-  const handleClick = () => {
-    const gs = gameStateRef.current;
+  const isPlaying = !['IDLE', 'END'].includes(gameState);
 
-    if (gs === 'WAITING') {
-      handleFail("너무 일찍 눌렀어요! (재수강ㅠㅠ)");
-      return;
-    }
-    if (gs === 'FAKE') {
-      handleFail("그건 인형이잖아요... (감점!!)");
-      return;
-    }
-    if (gs === 'READY') {
-      if (timerRef.current) clearTimeout(timerRef.current);
-      const ms = Date.now() - readyTimeRef.current;
-      const points = Math.max(10, Math.floor(200 - ms / 5));
-      const newScore = score + points;
-      setScore(newScore);
-      setReactionMs(ms);
-      setGameState('SUCCESS');
-      gameStateRef.current = 'SUCCESS';
-      setMessage(`찰칵! 가방 닫음! (+${points}점)`);
+  /* Professor image animation per state */
+  const profAnim =
+    gameState === 'WAITING' ? { rotate: [-0.5, 0.5], y: [0, -3, 0], filter: 'brightness(1) saturate(1)' } :
+    gameState === 'READY'   ? { rotate: [-2, 2, -2], x: [-3, 3, -3], scale: 1.03, filter: 'brightness(1.1) saturate(1.3)' } :
+    gameState === 'SUCCESS' ? { rotate: [-6, 4, -2, 0], scale: [1, 1.05, 1], filter: 'brightness(1.2) saturate(1.5)' } :
+    gameState === 'FAIL'    ? { x: [-8, 8, -6, 6, 0], rotate: [-3, 3, -2, 0], filter: 'brightness(0.55) saturate(0.2) grayscale(0.8)' } :
+    gameState === 'FAKE'    ? { rotate: [0, 1, -1, 0], filter: 'brightness(1) saturate(1)' } :
+    { rotate: 0, scale: 1, filter: 'brightness(1) saturate(1)' };
 
-      setTimeout(() => {
-        const nextRound = round + 1;
-        if (nextRound > 10) {
-          endGame(newScore);
-        } else {
-          setRound(nextRound);
-          startRound(nextRound);
-        }
-      }, 1400);
-    }
-  };
+  const profTransition =
+    gameState === 'WAITING' ? { repeat: Infinity, duration: 2.5, ease: 'easeInOut' } :
+    gameState === 'READY'   ? { repeat: Infinity, duration: 0.1 } :
+    gameState === 'FAKE'    ? { repeat: Infinity, duration: 2, ease: 'easeInOut' } :
+    { duration: 0.4 };
 
-  const endGame = (finalScore: number) => {
-    setGameState('END');
-    gameStateRef.current = 'END';
-    updateScore('game1', finalScore);
-  };
+  const msgColor =
+    gameState === 'READY'   ? '#fbbf24' :
+    gameState === 'SUCCESS' ? '#34d399' :
+    gameState === 'FAIL'    ? '#f87171' :
+    gameState === 'FAKE'    ? '#f472b6' :
+    'rgba(255,255,255,0.6)';
 
-  useEffect(() => {
-    return () => { if (timerRef.current) clearTimeout(timerRef.current); };
-  }, []);
-
-  // Derive professor animation from game state
-  const profVariants = {
-    idle: { rotate: 0, scale: 1, x: 0, filter: 'brightness(1) saturate(1)' },
-    waiting: { rotate: [0, -1, 1, 0], scale: 1, x: 0, filter: 'brightness(1) saturate(1)' },
-    ready: { rotate: [-2, 2, -2], scale: 1.04, x: [-4, 4, -4], filter: 'brightness(1.05) saturate(1.2)' },
-    success: { rotate: [0, -8, 5, 0], scale: [1, 1.08, 1], x: 0, filter: 'brightness(1.15) saturate(1.4)' },
-    fail: { rotate: [0, -5, 5, -3, 3, 0], scale: [1, 1.03, 0.97, 1], x: [0, -10, 10, -8, 8, 0], filter: 'brightness(0.7) saturate(0.3)' },
-    fake: { rotate: [0, 1.5, -1.5, 0], scale: 1.02, x: 0, filter: 'brightness(1) saturate(1)' },
-  };
-
-  const getProfAnim = () => {
-    if (gameState === 'WAITING') return profVariants.waiting;
-    if (gameState === 'READY') return profVariants.ready;
-    if (gameState === 'SUCCESS') return profVariants.success;
-    if (gameState === 'FAIL') return profVariants.fail;
-    if (gameState === 'FAKE') return profVariants.fake;
-    return profVariants.idle;
-  };
-
-  const getProfTransition = () => {
-    if (gameState === 'READY') return { repeat: Infinity, duration: 0.08 };
-    if (gameState === 'WAITING') return { repeat: Infinity, duration: 2, ease: 'easeInOut' };
-    if (gameState === 'SUCCESS') return { duration: 0.4, ease: 'easeOut' };
-    if (gameState === 'FAIL') return { duration: 0.5, ease: 'easeOut' };
-    if (gameState === 'FAKE') return { repeat: Infinity, duration: 1.5, ease: 'easeInOut' };
-    return { duration: 0.3 };
-  };
-
-  const isPlaying = gameState !== 'IDLE' && gameState !== 'END';
+  const msg =
+    gameState === 'WAITING' ? '가방을 주시하세요...' :
+    gameState === 'READY'   ? '지금 닫아!!!' :
+    gameState === 'SUCCESS' ? `찰칵! 가방 닫음! (+${Math.max(10, Math.floor(200 - reactionMs / 5))}점)` :
+    gameState === 'FAIL'    ? '재수강...' :
+    gameState === 'FAKE'    ? '어라?' :
+    '';
 
   return (
     <div
-      className="min-h-[100dvh] w-full flex flex-col touch-none overflow-hidden relative select-none"
-      style={{ background: 'linear-gradient(180deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)' }}
-      onClick={isPlaying ? handleClick : undefined}
       data-testid="game1-area"
+      onClick={isPlaying ? handleClick : undefined}
+      style={{
+        minHeight: '100dvh', width: '100%',
+        display: 'flex', flexDirection: 'column',
+        background: 'linear-gradient(180deg,#12172b 0%,#1a2240 40%,#1e2a50 100%)',
+        touchAction: 'none', userSelect: 'none', overflow: 'hidden', position: 'relative',
+      }}
     >
       {/* Header */}
-      <div className="p-4 flex items-center justify-between z-20 relative">
+      <div style={{ padding: '14px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', zIndex: 20, position: 'relative' }}>
         <Link href="/select">
           <button
             data-testid="btn-back"
             onClick={(e) => e.stopPropagation()}
-            className="p-2 bg-white/10 rounded-full hover:bg-white/20 transition-colors border border-white/10"
+            style={{ padding: 8, background: 'rgba(255,255,255,0.1)', borderRadius: '50%', border: '1px solid rgba(255,255,255,0.15)', cursor: 'pointer', display: 'flex' }}
           >
-            <ChevronLeft className="w-6 h-6 text-white" />
+            <ChevronLeft style={{ width: 24, height: 24, color: 'white' }} />
           </button>
         </Link>
-        <div className="font-mono font-bold text-xl text-white tracking-widest">
-          SCORE: <span className="text-yellow-400">{score}</span>
+        <div style={{ fontFamily: 'monospace', fontWeight: 900, fontSize: 20, color: 'white', letterSpacing: 3 }}>
+          SCORE: <span style={{ color: '#fbbf24' }}>{score}</span>
         </div>
-        <div className="font-bold text-rose-300 bg-rose-500/20 border border-rose-500/30 px-3 py-1 rounded-full text-sm">
+        <div style={{ fontWeight: 700, color: '#fca5a5', background: 'rgba(239,68,68,0.15)', border: '1px solid rgba(239,68,68,0.3)', padding: '4px 12px', borderRadius: 20, fontSize: 13 }}>
           ROUND {round}/10
         </div>
       </div>
 
-      {/* Message bar */}
+      {/* Message */}
       {isPlaying && (
-        <div className="relative z-20 text-center px-4 pb-2">
+        <div style={{ textAlign: 'center', padding: '0 16px 4px', zIndex: 20, minHeight: 36 }}>
           <AnimatePresence mode="wait">
             <motion.div
-              key={message}
-              initial={{ y: -10, opacity: 0 }}
+              key={msg}
+              initial={{ y: -8, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
-              exit={{ y: 10, opacity: 0 }}
-              transition={{ duration: 0.2 }}
-              className={`text-xl font-black tracking-wide ${
-                gameState === 'READY' ? 'text-yellow-300 animate-pulse' :
-                gameState === 'SUCCESS' ? 'text-emerald-400' :
-                gameState === 'FAIL' ? 'text-red-400' :
-                gameState === 'FAKE' ? 'text-pink-400' :
-                'text-white/60'
-              }`}
+              exit={{ y: 8, opacity: 0 }}
+              transition={{ duration: 0.15 }}
+              style={{ fontSize: 20, fontWeight: 900, color: msgColor, letterSpacing: 1 }}
             >
-              {message}
+              {msg}
             </motion.div>
           </AnimatePresence>
         </div>
       )}
 
-      {/* Main content */}
-      <div className="flex-1 flex flex-col items-center justify-end relative overflow-hidden pb-8">
+      {/* Scene */}
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-end', position: 'relative', overflow: 'hidden' }}>
 
-        {/* IDLE state */}
+        {/* IDLE overlay */}
         <AnimatePresence>
           {gameState === 'IDLE' && (
             <motion.div
-              key="idle-overlay"
+              key="idle"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="absolute inset-0 flex flex-col items-center justify-center z-30 px-6"
               onClick={(e) => e.stopPropagation()}
+              style={{
+                position: 'absolute', inset: 0, zIndex: 30,
+                display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+                padding: 24,
+              }}
             >
               <motion.h1
                 animate={{ scale: [1, 1.03, 1] }}
                 transition={{ repeat: Infinity, duration: 2 }}
-                className="text-4xl font-black text-rose-400 mb-2 drop-shadow-lg"
+                style={{ fontSize: 38, fontWeight: 900, color: '#fb7185', margin: '0 0 12px', textShadow: '0 4px 20px rgba(251,113,133,0.5)' }}
               >
                 교수님 가방 닫기
               </motion.h1>
-              <p className="text-white/70 text-center mb-8 leading-relaxed">
-                교수님이 가방에서 책을 꺼내려는 찰나에<br/>
-                <b className="text-yellow-300">화면을 TAP!</b>해서 가방을 닫으세요.<br/>
-                <span className="text-pink-400 text-sm">인형에 속으면 감점이에요!</span>
+              <p style={{ color: 'rgba(255,255,255,0.7)', textAlign: 'center', lineHeight: 1.7, marginBottom: 32 }}>
+                교수님이 가방에서 책을 꺼내려는 찰나에<br />
+                <b style={{ color: '#fbbf24' }}>화면을 TAP!</b>해서 가방을 닫으세요.<br />
+                <span style={{ color: '#f472b6', fontSize: 14 }}>인형에 속으면 감점이에요!</span>
               </p>
               <motion.button
                 data-testid="btn-start"
                 whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
+                whileTap={{ scale: 0.93 }}
                 onClick={startGame}
-                className="bg-rose-500 text-white font-black py-4 px-10 rounded-full text-2xl shadow-[0_6px_0_rgb(159,18,57)] hover:bg-rose-600 active:translate-y-[6px] active:shadow-none transition-all"
+                style={{
+                  background: '#e11d48', color: 'white', fontWeight: 900,
+                  padding: '16px 40px', borderRadius: 50, fontSize: 22,
+                  border: 'none', cursor: 'pointer',
+                  boxShadow: '0 6px 0 #9f1239, 0 12px 30px rgba(225,29,72,0.4)',
+                }}
               >
                 게임 시작
               </motion.button>
             </motion.div>
           )}
         </AnimatePresence>
-
-        {/* Professor image */}
-        {gameState !== 'IDLE' && gameState !== 'END' && (
-          <div className="relative w-full max-w-lg mx-auto px-2">
-
-            {/* Book flying out of bag — READY state */}
-            <AnimatePresence>
-              {gameState === 'READY' && (
-                <motion.div
-                  key="book-real"
-                  initial={{ y: 60, x: -60, opacity: 0, rotate: -15, scale: 0.5 }}
-                  animate={{ y: -30, x: -20, opacity: 1, rotate: -5, scale: 1 }}
-                  exit={{ y: 60, x: -60, opacity: 0, scale: 0.5 }}
-                  transition={{ duration: 0.25, ease: 'easeOut' }}
-                  className="absolute left-[18%] top-[10%] z-20 pointer-events-none"
-                >
-                  <div className="w-20 h-24 bg-slate-800 border-2 border-slate-600 rounded-sm shadow-2xl flex flex-col overflow-hidden">
-                    <div className="bg-blue-900 flex-1 flex items-center justify-center p-1">
-                      <div className="text-white text-[9px] font-black text-center leading-tight">
-                        ADVANCED<br/>PHYSICS<br/>
-                        <div className="text-[7px] font-normal opacity-70 mt-1">E=mc²</div>
-                      </div>
-                    </div>
-                    <div className="h-1.5 bg-slate-600" />
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-
-            {/* Fake item — plushie/toy */}
-            <AnimatePresence>
-              {gameState === 'FAKE' && (
-                <motion.div
-                  key="fake-item"
-                  initial={{ y: 50, x: -50, opacity: 0, rotate: 20, scale: 0.3 }}
-                  animate={{ y: -10, x: -15, opacity: 1, rotate: 10, scale: 1 }}
-                  exit={{ y: 50, x: -50, opacity: 0, scale: 0.3 }}
-                  transition={{ duration: 0.3, ease: 'easeOut' }}
-                  className="absolute left-[20%] top-[15%] z-20 pointer-events-none"
-                >
-                  {/* CSS plushie bear */}
-                  <div className="relative">
-                    <div className="w-14 h-14 bg-amber-400 rounded-full border-2 border-amber-600 shadow-xl flex items-center justify-center">
-                      <div className="w-8 h-8 bg-amber-300 rounded-full flex items-center justify-center gap-0.5">
-                        <div className="w-1.5 h-1.5 bg-slate-800 rounded-full" />
-                        <div className="w-1.5 h-1.5 bg-slate-800 rounded-full" />
-                      </div>
-                    </div>
-                    {/* Ears */}
-                    <div className="absolute -top-2.5 left-1 w-5 h-5 bg-amber-400 rounded-full border-2 border-amber-600" />
-                    <div className="absolute -top-2.5 right-1 w-5 h-5 bg-amber-400 rounded-full border-2 border-amber-600" />
-                    <div className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 text-[9px] font-black text-amber-900 whitespace-nowrap">인형!</div>
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-
-            {/* Reaction time badge — SUCCESS */}
-            <AnimatePresence>
-              {gameState === 'SUCCESS' && reactionMs > 0 && (
-                <motion.div
-                  key="react-badge"
-                  initial={{ scale: 0, opacity: 0, y: 0 }}
-                  animate={{ scale: 1, opacity: 1, y: -20 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ type: 'spring', stiffness: 400, damping: 15 }}
-                  className="absolute top-[5%] right-[8%] z-30 bg-emerald-400 text-white font-black text-sm px-3 py-1.5 rounded-2xl shadow-lg rotate-6 pointer-events-none"
-                >
-                  {reactionMs}ms ⚡
-                </motion.div>
-              )}
-            </AnimatePresence>
-
-            {/* SUCCESS flash overlay */}
-            <AnimatePresence>
-              {gameState === 'SUCCESS' && (
-                <motion.div
-                  key="success-flash"
-                  initial={{ opacity: 0.6 }}
-                  animate={{ opacity: 0 }}
-                  transition={{ duration: 0.6 }}
-                  className="absolute inset-0 z-10 rounded-2xl pointer-events-none"
-                  style={{ background: 'radial-gradient(circle, rgba(52,211,153,0.5) 0%, transparent 70%)' }}
-                />
-              )}
-            </AnimatePresence>
-
-            {/* FAIL overlay */}
-            <AnimatePresence>
-              {gameState === 'FAIL' && (
-                <motion.div
-                  key="fail-overlay"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  className="absolute inset-0 z-10 rounded-2xl pointer-events-none"
-                  style={{ background: 'radial-gradient(circle, rgba(239,68,68,0.3) 0%, rgba(0,0,0,0.5) 100%)' }}
-                >
-                  <motion.div
-                    initial={{ scale: 0, rotate: -10 }}
-                    animate={{ scale: 1, rotate: -10 }}
-                    transition={{ type: 'spring', stiffness: 300, damping: 12 }}
-                    className="absolute top-[20%] left-1/2 -translate-x-1/2 text-5xl font-black text-red-500 drop-shadow-[0_0_20px_rgba(255,0,0,0.9)] whitespace-nowrap"
-                    style={{ WebkitTextStroke: '2px white', fontFamily: '"Noto Sans KR", sans-serif' }}
-                  >
-                    재수강!!
-                  </motion.div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-
-            {/* The professor image — animated */}
-            <motion.img
-              src={professorImg}
-              alt="교수님"
-              className="w-full object-contain relative z-0 pointer-events-none"
-              style={{ maxHeight: '55vh' }}
-              animate={getProfAnim()}
-              transition={getProfTransition()}
-            />
-
-            {/* Tap hint */}
-            {gameState === 'WAITING' && (
-              <motion.div
-                animate={{ opacity: [0.4, 0.9, 0.4] }}
-                transition={{ repeat: Infinity, duration: 1.5 }}
-                className="absolute bottom-2 left-1/2 -translate-x-1/2 text-white/50 text-xs font-bold uppercase tracking-widest"
-              >
-                화면을 터치하세요...
-              </motion.div>
-            )}
-
-            {/* Zip sound text effect — WAITING/READY */}
-            {(gameState === 'WAITING' || gameState === 'READY') && (
-              <AnimatePresence>
-                <motion.div
-                  key={`zip-${gameState}`}
-                  initial={{ opacity: 0, x: -30, scale: 0.7 }}
-                  animate={{ opacity: [0, 1, 0.7, 0], x: [- 30, 10, 20, 40], scale: [0.7, 1.1, 1, 0.8] }}
-                  transition={{ duration: 1.2, ease: 'easeInOut' }}
-                  className={`absolute left-[12%] top-[40%] z-20 font-black text-lg pointer-events-none ${gameState === 'READY' ? 'text-yellow-400' : 'text-white/50'}`}
-                  style={{ fontFamily: 'Georgia, serif', letterSpacing: '0.15em' }}
-                >
-                  {gameState === 'READY' ? '징~~~~~~!!' : '징~징~'}
-                </motion.div>
-              </AnimatePresence>
-            )}
-          </div>
-        )}
 
         {/* END screen */}
         <AnimatePresence>
@@ -390,27 +371,44 @@ export default function Game1() {
               initial={{ scale: 0.85, opacity: 0, y: 30 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
               transition={{ type: 'spring', stiffness: 260, damping: 20 }}
-              className="absolute inset-0 flex flex-col items-center justify-center p-6 z-30"
               onClick={(e) => e.stopPropagation()}
+              style={{
+                position: 'absolute', inset: 0, zIndex: 40,
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                padding: 24,
+              }}
             >
-              <div className="bg-white rounded-3xl p-8 text-black text-center max-w-sm w-full shadow-2xl">
-                <div className="text-2xl font-black mb-1 text-slate-800">게임 종료!</div>
-                <div className="text-slate-500 text-sm mb-4">교수님 가방 닫기</div>
-                <div className="text-7xl font-black text-rose-500 mb-2 font-mono tabular-nums">{score}</div>
-                <div className="text-slate-400 text-sm mb-6">최종 점수</div>
-
-                <div className="flex gap-3">
+              <div style={{
+                background: 'white', borderRadius: 28, padding: '32px 28px',
+                textAlign: 'center', maxWidth: 340, width: '100%',
+                boxShadow: '0 30px 80px rgba(0,0,0,0.5)',
+              }}>
+                <div style={{ fontSize: 24, fontWeight: 900, color: '#1e293b', marginBottom: 4 }}>게임 종료!</div>
+                <div style={{ fontSize: 14, color: '#94a3b8', marginBottom: 12 }}>교수님 가방 닫기</div>
+                <div style={{ fontSize: 72, fontWeight: 900, color: '#e11d48', marginBottom: 6, fontFamily: 'monospace' }}>{score}</div>
+                <div style={{ fontSize: 13, color: '#94a3b8', marginBottom: 24 }}>최종 점수</div>
+                <div style={{ display: 'flex', gap: 12 }}>
                   <button
                     data-testid="btn-retry"
                     onClick={startGame}
-                    className="bg-rose-500 text-white px-6 py-3 rounded-xl font-bold hover:bg-rose-600 flex-1 shadow-[0_4px_0_rgb(159,18,57)] active:translate-y-[4px] active:shadow-none transition-all"
+                    style={{
+                      flex: 1, background: '#e11d48', color: 'white',
+                      padding: '14px 0', borderRadius: 14, fontWeight: 900,
+                      border: 'none', cursor: 'pointer', fontSize: 15,
+                      boxShadow: '0 4px 0 #9f1239',
+                    }}
                   >
                     다시하기
                   </button>
-                  <Link href="/" className="flex-1">
+                  <Link href="/" style={{ flex: 1, display: 'block' }}>
                     <button
                       data-testid="btn-home"
-                      className="w-full bg-slate-100 text-slate-800 px-6 py-3 rounded-xl font-bold hover:bg-slate-200 shadow-[0_4px_0_rgb(203,213,225)] active:translate-y-[4px] active:shadow-none transition-all"
+                      style={{
+                        width: '100%', background: '#f1f5f9', color: '#334155',
+                        padding: '14px 0', borderRadius: 14, fontWeight: 900,
+                        border: 'none', cursor: 'pointer', fontSize: 15,
+                        boxShadow: '0 4px 0 #cbd5e1',
+                      }}
                     >
                       홈으로
                     </button>
@@ -420,6 +418,156 @@ export default function Game1() {
             </motion.div>
           )}
         </AnimatePresence>
+
+        {/* ── Professor + animated layers ── */}
+        {isPlaying && (
+          <div
+            style={{
+              position: 'relative',
+              width: '100%', maxWidth: 540,
+              margin: '0 auto',
+            }}
+          >
+            {/* Book emerging from bag */}
+            <AdvancedPhysicsBook visible={gameState === 'READY'} />
+
+            {/* Plushie bear for fake */}
+            <PlushieBear visible={gameState === 'FAKE'} />
+
+            {/* Reaction time badge */}
+            <AnimatePresence>
+              {gameState === 'SUCCESS' && reactionMs > 0 && (
+                <motion.div
+                  key="badge"
+                  initial={{ scale: 0, opacity: 0, rotate: -10 }}
+                  animate={{ scale: 1, opacity: 1, rotate: 6 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ type: 'spring', stiffness: 500, damping: 18 }}
+                  style={{
+                    position: 'absolute', top: '8%', right: '8%', zIndex: 20,
+                    background: '#10b981', color: 'white', fontWeight: 900,
+                    padding: '6px 14px', borderRadius: 20, fontSize: 14,
+                    boxShadow: '0 4px 20px rgba(16,185,129,0.5)',
+                    pointerEvents: 'none',
+                  }}
+                >
+                  {reactionMs}ms ⚡
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            {/* 재수강 stamp on FAIL */}
+            <AnimatePresence>
+              {gameState === 'FAIL' && (
+                <motion.div
+                  key="fail-stamp"
+                  initial={{ scale: 0, rotate: -15, opacity: 0 }}
+                  animate={{ scale: 1, rotate: -12, opacity: 1 }}
+                  transition={{ type: 'spring', stiffness: 350, damping: 14 }}
+                  style={{
+                    position: 'absolute', top: '15%', left: '50%',
+                    transform: 'translateX(-50%)',
+                    zIndex: 20, pointerEvents: 'none',
+                    fontSize: 52, fontWeight: 900, color: '#ef4444',
+                    WebkitTextStroke: '2.5px white',
+                    textShadow: '0 0 30px rgba(239,68,68,0.9)',
+                    letterSpacing: 2, whiteSpace: 'nowrap',
+                    fontFamily: '"Noto Sans KR", sans-serif',
+                  }}
+                >
+                  재수강!!
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            {/* Sound text effect */}
+            <AnimatePresence>
+              {zipText && gameState !== 'END' && (
+                <motion.div
+                  key={zipText + gameState}
+                  initial={{ opacity: 0, x: -20, y: 0, scale: 0.8 }}
+                  animate={{ opacity: [0, 1, 0.8, 0], x: [- 20, 10, 30], y: [-5, -25], scale: [0.8, 1.1, 0.9] }}
+                  transition={{ duration: 1.1 }}
+                  style={{
+                    position: 'absolute', left: '15%', top: '40%', zIndex: 20,
+                    pointerEvents: 'none',
+                    fontSize: gameState === 'READY' ? 18 : 14,
+                    fontWeight: 900,
+                    color: gameState === 'SUCCESS' ? '#34d399' : gameState === 'FAIL' ? '#f87171' : gameState === 'FAKE' ? '#f472b6' : '#fbbf24',
+                    textShadow: '0 2px 8px rgba(0,0,0,0.6)',
+                    fontFamily: 'Georgia, serif',
+                    letterSpacing: '0.1em',
+                  }}
+                >
+                  {zipText}
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            {/* Red vignette on FAIL */}
+            <AnimatePresence>
+              {gameState === 'FAIL' && (
+                <motion.div
+                  key="vignette"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  style={{
+                    position: 'absolute', inset: 0, zIndex: 5, pointerEvents: 'none', borderRadius: 12,
+                    background: 'radial-gradient(circle at center, transparent 30%, rgba(239,68,68,0.35) 100%)',
+                  }}
+                />
+              )}
+            </AnimatePresence>
+
+            {/* Green flash on SUCCESS */}
+            <AnimatePresence>
+              {gameState === 'SUCCESS' && (
+                <motion.div
+                  key="flash"
+                  initial={{ opacity: 0.5 }}
+                  animate={{ opacity: 0 }}
+                  transition={{ duration: 0.5 }}
+                  style={{
+                    position: 'absolute', inset: 0, zIndex: 5, pointerEvents: 'none',
+                    background: 'radial-gradient(circle, rgba(52,211,153,0.45) 0%, transparent 70%)',
+                  }}
+                />
+              )}
+            </AnimatePresence>
+
+            {/* Professor character — transparent PNG, animated */}
+            <motion.img
+              src={professorNoBg}
+              alt="교수님"
+              animate={profAnim}
+              transition={profTransition}
+              style={{
+                width: '100%',
+                maxHeight: '60vh',
+                objectFit: 'contain',
+                position: 'relative',
+                zIndex: 6,
+                pointerEvents: 'none',
+                display: 'block',
+              }}
+            />
+
+            {/* Tap hint pulse */}
+            {gameState === 'WAITING' && (
+              <motion.div
+                animate={{ opacity: [0.35, 0.75, 0.35] }}
+                transition={{ repeat: Infinity, duration: 1.4 }}
+                style={{
+                  position: 'absolute', bottom: 4, left: '50%', transform: 'translateX(-50%)',
+                  color: 'rgba(255,255,255,0.5)', fontSize: 12, fontWeight: 700,
+                  letterSpacing: 3, textTransform: 'uppercase', whiteSpace: 'nowrap',
+                }}
+              >
+                화면을 터치하세요...
+              </motion.div>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );
