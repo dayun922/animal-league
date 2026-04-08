@@ -198,8 +198,8 @@ export default function Game1() {
     if (gs === 'READY') {
       if (timerRef.current) clearTimeout(timerRef.current);
       const ms = Date.now() - readyTimeRef.current;
-      // Score: faster = higher. Max ~1000 for instant, decreases with time
-      const pts = Math.max(0, Math.round(1000 - ms * 1.8));
+      // Score: 1000 - ms (1ms = 1점 감점)
+      const pts = Math.max(0, Math.round(1000 - ms));
       currentScoreRef.current = pts;
       setScore(pts);
       setReactionMs(ms);
@@ -378,10 +378,10 @@ export default function Game1() {
                 {(() => {
                   const tier =
                     score === 0   ? { label: '재수강 확정', color: '#ef4444', emoji: '💀' } :
-                    score >= 820  ? { label: '황금 반사 신경', color: '#f59e0b', emoji: '⚡' } :
-                    score >= 640  ? { label: 'A+ 사냥꾼', color: '#10b981', emoji: '🎯' } :
-                    score >= 460  ? { label: '평범한 대학생', color: '#3b82f6', emoji: '📚' } :
-                    score >= 280  ? { label: '졸린 눈', color: '#8b5cf6', emoji: '😪' } :
+                    score >= 800  ? { label: '황금 반사 신경', color: '#f59e0b', emoji: '⚡' } :
+                    score >= 650  ? { label: 'A+ 사냥꾼', color: '#10b981', emoji: '🎯' } :
+                    score >= 500  ? { label: '평범한 대학생', color: '#3b82f6', emoji: '📚' } :
+                    score >= 300  ? { label: '졸린 눈', color: '#8b5cf6', emoji: '😪' } :
                                     { label: '손가락이 느려요', color: '#94a3b8', emoji: '🐢' };
                   return (
                     <>
