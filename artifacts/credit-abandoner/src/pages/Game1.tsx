@@ -157,34 +157,34 @@ export default function Game1() {
     setState('WAITING');
     setZipText('');
 
-    const baseWait = Math.random() * 3000 + 1500;
-    const waitTime = Math.max(600, baseWait - r * 120);
+    const waitTime = Math.random() * 3000 + 1500;
 
     timerRef.current = setTimeout(() => {
-      const isFake = Math.random() < Math.min(0.4, 0.18 + r * 0.025);
+      // 30% chance of a fake on round 1
+      const isFake = Math.random() < 0.3;
       if (isFake) {
         setState('FAKE');
         setZipText('..??');
         timerRef.current = setTimeout(() => {
           if (gameStateRef.current === 'FAKE') {
-            startRound(r);
+            startRound(r); // retry same round after fake
           }
         }, 1700);
       } else {
         setState('READY');
         setZipText('징~~~~!!!!');
         readyTimeRef.current = Date.now();
-        const window = Math.max(320, 1000 - r * 55);
+        // 1.5 second window to react
         timerRef.current = setTimeout(() => {
           if (gameStateRef.current === 'READY') {
-            triggerFail('시간 초과!! 교수님이 과제를 꺼내셨습니다...', r);
+            triggerFail('시간 초과!! 교수님이 과제를 꺼내셨습니다...');
           }
-        }, window);
+        }, 1500);
       }
     }, waitTime);
   };
 
-  const triggerFail = (msg: string, _r?: number) => {
+  const triggerFail = (msg: string) => {
     if (timerRef.current) clearTimeout(timerRef.current);
     setState('FAIL');
     setZipText('재수강!!');
@@ -198,24 +198,16 @@ export default function Game1() {
     if (gs === 'READY') {
       if (timerRef.current) clearTimeout(timerRef.current);
       const ms = Date.now() - readyTimeRef.current;
-      const pts = Math.max(10, Math.floor(200 - ms / 5));
-      const newScore = currentScoreRef.current + pts;
-      currentScoreRef.current = newScore;
-      setScore(newScore);
+      // Score: faster = higher. Max ~1000 for instant, decreases with time
+      const pts = Math.max(0, Math.round(1000 - ms * 1.8));
+      currentScoreRef.current = pts;
+      setScore(pts);
       setReactionMs(ms);
       setState('SUCCESS');
       setZipText(`${ms}ms ⚡`);
 
-      const nextRound = currentRoundRef.current + 1;
-      setTimeout(() => {
-        if (nextRound > 10) {
-          endGame();
-        } else {
-          currentRoundRef.current = nextRound;
-          setRound(nextRound);
-          startRound(nextRound);
-        }
-      }, 1300);
+      // Single shot — go straight to END
+      setTimeout(() => endGame(), 1600);
     }
   };
 
@@ -262,7 +254,7 @@ export default function Game1() {
   const msg =
     gameState === 'WAITING' ? '가방을 주시하세요...' :
     gameState === 'READY'   ? '지금 닫아!!!' :
-    gameState === 'SUCCESS' ? `찰칵! 가방 닫음! (+${Math.max(10, Math.floor(200 - reactionMs / 5))}점)` :
+    gameState === 'SUCCESS' ? `찰칵!! ${reactionMs}ms — +${score}점` :
     gameState === 'FAIL'    ? '재수강...' :
     gameState === 'FAKE'    ? '어라?' :
     '';
@@ -290,10 +282,10 @@ export default function Game1() {
           </button>
         </Link>
         <div style={{ fontFamily: 'monospace', fontWeight: 900, fontSize: 20, color: 'white', letterSpacing: 3 }}>
-          SCORE: <span style={{ color: '#fbbf24' }}>{score}</span>
+          {reactionMs > 0 ? <><span style={{ color: '#fbbf24' }}>{reactionMs}</span><span style={{ fontSize: 13, opacity: 0.7 }}>ms</span></> : <span style={{ color: 'rgba(255,255,255,0.3)', fontSize: 15 }}>반응속도 테스트</span>}
         </div>
         <div style={{ fontWeight: 700, color: '#fca5a5', background: 'rgba(239,68,68,0.15)', border: '1px solid rgba(239,68,68,0.3)', padding: '4px 12px', borderRadius: 20, fontSize: 13 }}>
-          ROUND {round}/10
+          1 SHOT
         </div>
       </div>
 
@@ -316,7 +308,7 @@ export default function Game1() {
       )}
 
       {/* Scene */}
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-end', position: 'relative', overflow: 'hidden' }}>
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', position: 'relative', overflow: 'hidden' }}>
 
         {/* IDLE overlay */}
         <AnimatePresence>
@@ -383,9 +375,34 @@ export default function Game1() {
                 textAlign: 'center', maxWidth: 340, width: '100%',
                 boxShadow: '0 30px 80px rgba(0,0,0,0.5)',
               }}>
-                <div style={{ fontSize: 24, fontWeight: 900, color: '#1e293b', marginBottom: 4 }}>게임 종료!</div>
-                <div style={{ fontSize: 14, color: '#94a3b8', marginBottom: 12 }}>교수님 가방 닫기</div>
-                <div style={{ fontSize: 72, fontWeight: 900, color: '#e11d48', marginBottom: 6, fontFamily: 'monospace' }}>{score}</div>
+                {(() => {
+                  const tier =
+                    score === 0   ? { label: '재수강 확정', color: '#ef4444', emoji: '💀' } :
+                    score >= 820  ? { label: '황금 반사 신경', color: '#f59e0b', emoji: '⚡' } :
+                    score >= 640  ? { label: 'A+ 사냥꾼', color: '#10b981', emoji: '🎯' } :
+                    score >= 460  ? { label: '평범한 대학생', color: '#3b82f6', emoji: '📚' } :
+                    score >= 280  ? { label: '졸린 눈', color: '#8b5cf6', emoji: '😪' } :
+                                    { label: '손가락이 느려요', color: '#94a3b8', emoji: '🐢' };
+                  return (
+                    <>
+                      <div style={{ fontSize: 28, marginBottom: 4 }}>{tier.emoji}</div>
+                      <div style={{ fontSize: 20, fontWeight: 900, color: tier.color, marginBottom: 2 }}>{tier.label}</div>
+                      <div style={{ fontSize: 13, color: '#94a3b8', marginBottom: 16 }}>교수님 가방 닫기</div>
+                      {reactionMs > 0 ? (
+                        <>
+                          <div style={{ fontSize: 64, fontWeight: 900, color: '#1e293b', marginBottom: 0, fontFamily: 'monospace' }}>{reactionMs}</div>
+                          <div style={{ fontSize: 16, color: '#64748b', marginBottom: 4 }}>ms</div>
+                          <div style={{ fontSize: 28, fontWeight: 900, color: tier.color, marginBottom: 2, fontFamily: 'monospace' }}>+{score}점</div>
+                        </>
+                      ) : (
+                        <>
+                          <div style={{ fontSize: 64, fontWeight: 900, color: '#ef4444', marginBottom: 4 }}>0</div>
+                          <div style={{ fontSize: 14, color: '#94a3b8', marginBottom: 4 }}>반응 실패</div>
+                        </>
+                      )}
+                    </>
+                  );
+                })()}
                 <div style={{ fontSize: 13, color: '#94a3b8', marginBottom: 24 }}>최종 점수</div>
                 <div style={{ display: 'flex', gap: 12 }}>
                   <button
