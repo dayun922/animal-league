@@ -1,0 +1,8 @@
+uploads = []
+generated = []
+
+[[outputs]]
+id = "E3cYePnaIyua9KNcJnzuo"
+uri = "file://credit-abandoner.tar.gz"
+type = "unspecified"
+title = "학점 포기자 - 소스 코드 전체"
