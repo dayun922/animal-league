@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Link } from 'wouter';
 import { ChevronLeft } from 'lucide-react';
 import { useGame } from '../contexts/GameContext';
+import classroomBgSrc from '@assets/image_1775732459196.png';
 
 /* ── Constants ─────────────────────────────────────────────── */
 const GAME_DURATION = 30;
@@ -41,6 +42,14 @@ export default function Game2() {
   const { updateScore } = useGame();
   const canvasRef  = useRef<HTMLCanvasElement>(null);
   const rafRef     = useRef<number>(0);
+  const bgImgRef   = useRef<HTMLImageElement | null>(null);
+
+  // Preload background image once
+  useEffect(() => {
+    const img = new Image();
+    img.src = classroomBgSrc;
+    img.onload = () => { bgImgRef.current = img; };
+  }, []);
 
   const [phase, setPhase]       = useState<'IDLE'|'PLAYING'|'END'>('IDLE');
   const [dispScore, setDispScore] = useState(0);
@@ -67,73 +76,33 @@ export default function Game2() {
 
   /* ── Draw helpers ──────────────────────────────────────── */
   function drawBackground(ctx: CanvasRenderingContext2D, w: number, h: number) {
-    // Wall
+    // White base
     ctx.fillStyle = '#f0ebe0';
     ctx.fillRect(0, 0, w, h);
 
-    // Chalkboard
-    const boardH = h * 0.28;
-    ctx.fillStyle = '#2a3d2a';
-    ctx.fillRect(30, 18, w - 60, boardH);
-    ctx.strokeStyle = '#8b7355';
-    ctx.lineWidth = 8;
-    ctx.strokeRect(30, 18, w - 60, boardH);
-
-    // Chalk lines on board
-    ctx.strokeStyle = 'rgba(255,255,255,0.12)';
-    ctx.lineWidth = 1;
-    for (let y = 18 + 28; y < 18 + boardH; y += 28) {
-      ctx.beginPath(); ctx.moveTo(50, y); ctx.lineTo(w - 50, y); ctx.stroke();
-    }
-
-    // Chalk text on board
-    ctx.fillStyle = 'rgba(255,255,255,0.65)';
-    ctx.font = `bold ${Math.round(w * 0.04)}px "Noto Sans KR", sans-serif`;
-    ctx.textAlign = 'center';
-    ctx.fillText('A+ 받기 특훈', w / 2, 18 + boardH * 0.45);
-    ctx.font = `${Math.round(w * 0.025)}px monospace`;
-    ctx.fillStyle = 'rgba(255,255,255,0.4)';
-    ctx.fillText('E = mc²   ∇²ψ = 0   f(x) = ?', w / 2, 18 + boardH * 0.72);
-
-    // Floor
-    ctx.fillStyle = '#c8a870';
-    ctx.fillRect(0, h * 0.84, w, h * 0.16);
-    ctx.strokeStyle = '#b89040';
-    ctx.lineWidth = 1.5;
-    for (let x = 0; x < w; x += 55) {
-      ctx.beginPath(); ctx.moveTo(x, h * 0.84); ctx.lineTo(x, h); ctx.stroke();
-    }
-    // Floor shadow
-    const grad = ctx.createLinearGradient(0, h * 0.84, 0, h * 0.84 + 12);
-    grad.addColorStop(0, 'rgba(0,0,0,0.18)');
-    grad.addColorStop(1, 'rgba(0,0,0,0)');
-    ctx.fillStyle = grad;
-    ctx.fillRect(0, h * 0.84, w, 12);
-
-    // Desks (2 rows)
-    for (let row = 0; row < 2; row++) {
-      const dy = h * 0.5 + row * h * 0.15;
-      for (let col = 0; col < 3; col++) {
-        const dx = w * 0.12 + col * (w * 0.3);
-        ctx.fillStyle = '#d4b483';
-        ctx.beginPath();
-        ctx.roundRect(dx, dy, w * 0.22, 14, 3);
-        ctx.fill();
-        ctx.strokeStyle = '#b8924a';
-        ctx.lineWidth = 1;
-        ctx.stroke();
-        // Desk legs
-        ctx.fillStyle = '#a07840';
-        ctx.fillRect(dx + 4, dy + 12, 5, 18);
-        ctx.fillRect(dx + w * 0.22 - 9, dy + 12, 5, 18);
+    // Draw classroom photo at 60% opacity (cover entire canvas)
+    const img = bgImgRef.current;
+    if (img && img.complete) {
+      const imgRatio = img.width / img.height;
+      const canvasRatio = w / h;
+      let sx = 0, sy = 0, sw = img.width, sh = img.height;
+      if (imgRatio > canvasRatio) {
+        sw = img.height * canvasRatio;
+        sx = (img.width - sw) / 2;
+      } else {
+        sh = img.width / canvasRatio;
+        sy = (img.height - sh) / 2;
       }
+      ctx.globalAlpha = 0.6;
+      ctx.drawImage(img, sx, sy, sw, sh, 0, 0, w, h);
+      ctx.globalAlpha = 1;
     }
   }
 
   function drawStudent(ctx: CanvasRenderingContext2D, w: number, h: number, bx: number) {
     const cx = bx;
     const baseY = h * 0.84;
-    const scale = h * 0.00224; // 0.0028 * 0.8
+    const scale = h * 0.00056; // 0.0028 * 0.2
 
     ctx.save();
     ctx.translate(cx, baseY);
@@ -366,7 +335,7 @@ export default function Game2() {
     const spawnInterval = Math.round(130 - (elapsed / GAME_DURATION) * 70);
     if (g.frame - g.lastSpawn >= spawnInterval) {
       g.lastSpawn = g.frame;
-      const baseSpeed = (2.5 + (elapsed / GAME_DURATION) * 3.5) * 1.1;
+      const baseSpeed = (2.5 + (elapsed / GAME_DURATION) * 3.5) * 1.4;
       g.items.push({
         id: g.nextId++,
         x: w * (0.1 + Math.random() * 0.8),
@@ -380,8 +349,8 @@ export default function Game2() {
     }
 
     /* update items */
-    // Character body bounds (matches drawStudent with scale = h * 0.00224)
-    const charScale  = h * 0.00224;
+    // Character body bounds (matches drawStudent with scale = h * 0.00056)
+    const charScale  = h * 0.00056;
     const baseY      = h * 0.84;
     const charHalfW  = 45 * charScale;  // slightly wider than torso for forgiveness
     const charTop    = baseY - 165 * charScale; // top of head
