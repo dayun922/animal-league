@@ -3,6 +3,7 @@ import { Link } from 'wouter';
 import { ChevronLeft } from 'lucide-react';
 import { useGame } from '../contexts/GameContext';
 import { usePlayer } from '../contexts/PlayerContext';
+import { ShareButton } from '../components/ShareButton';
 import { motion, AnimatePresence } from 'framer-motion';
 import { LionMascot } from '../components/LionMascot';
 import { ShareCard } from '../components/ShareCard';
@@ -47,7 +48,7 @@ const ALL_TAUNTS = [...TAUNTS_QUOTES, ...TAUNTS_FACTS];
 
 export default function Game4() {
   const { updateScore, tier, percentile } = useGame();
-  const { submitGameScore } = usePlayer();
+  const { submitGameScore, player } = usePlayer();
 
   const [gameState, setGameState] = useState<'IDLE' | 'PLAYING' | 'END'>('IDLE');
   const [timeLeft, setTimeLeft] = useState(300);
@@ -321,16 +322,16 @@ export default function Game4() {
             />
 
             <div className="w-full mt-6 flex flex-col gap-3">
-              <button 
-                data-testid="btn-share-everytime"
-                className="w-full bg-[#f91b37] text-white py-4 rounded-xl font-bold shadow-md hover:bg-red-600 transition-colors flex items-center justify-center gap-2"
-                onClick={() => {
-                  const text = `나 방금 학점 포기자 '열공 모드' ${penalties}번 방해받으면서 ${finalScore}점 받음ㅋㅋ\n"${worstTaunt}"\n#학점포기자 #에타`;
-                  navigator.clipboard?.writeText(text).catch(() => {});
+              <ShareButton
+                payload={{
+                  gameName: '열공 모드 📖',
+                  scoreLabel: `${finalScore}점`,
+                  detail: `방해 ${penalties}번${worstTaunt ? ` · "${worstTaunt}"` : ''}`,
+                  nickname: player?.nickname ?? '익명',
+                  schoolName: player?.schoolName ?? '',
                 }}
-              >
-                에브리타임에 자랑하기 (복사됨)
-              </button>
+                variant="dark"
+              />
               <button 
                 data-testid="btn-retry"
                 onClick={startGame}

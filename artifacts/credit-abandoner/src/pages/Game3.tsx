@@ -3,6 +3,7 @@ import { Link } from 'wouter';
 import { ChevronLeft, Coffee, Zap } from 'lucide-react';
 import { useGame } from '../contexts/GameContext';
 import { usePlayer } from '../contexts/PlayerContext';
+import { ShareButton } from '../components/ShareButton';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const LIVE_RANKINGS = [
@@ -34,7 +35,7 @@ const getMania = (clicks: number) => {
 
 export default function Game3() {
   const { updateScore } = useGame();
-  const { submitGameScore } = usePlayer();
+  const { submitGameScore, player } = usePlayer();
 
   const [gameState, setGameState] = useState<'IDLE' | 'PLAYING' | 'END'>('IDLE');
   const [timeLeft, setTimeLeft] = useState(10);
@@ -222,6 +223,18 @@ export default function Game3() {
             </div>
             <div className="text-amber-600/70 text-xs mb-8 font-medium">{endData.sub}</div>
             
+            <div className="mb-3">
+              <ShareButton
+                payload={{
+                  gameName: '커피 수혈 릴레이 ☕',
+                  scoreLabel: `${clicks}번 클릭`,
+                  detail: `초당 ${(clicks / 10).toFixed(1)}회`,
+                  nickname: player?.nickname ?? '익명',
+                  schoolName: player?.schoolName ?? '',
+                }}
+                variant="light"
+              />
+            </div>
             <div className="flex gap-3">
               <button 
                 data-testid="btn-retry"

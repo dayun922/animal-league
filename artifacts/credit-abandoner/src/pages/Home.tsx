@@ -6,6 +6,7 @@ import { usePlayer } from '../contexts/PlayerContext';
 import { LionMascot } from '../components/LionMascot';
 import { TierBadge } from '../components/TierBadge';
 import { Play, Trophy, Sparkles, LogOut, Medal, RotateCcw } from 'lucide-react';
+import { ShareButton } from '../components/ShareButton';
 
 export default function Home() {
   const { totalScore, tier, percentile, scores, resetScores } = useGame();
@@ -105,11 +106,27 @@ export default function Home() {
 
         {/* Leaderboard button */}
         <Link href="/leaderboard" className="w-full">
-          <button className="w-full bg-card hover:bg-card/80 text-foreground font-bold text-lg py-4 rounded-full border-2 border-card-border flex items-center justify-center gap-3 mb-8 transition-colors">
+          <button className="w-full bg-card hover:bg-card/80 text-foreground font-bold text-lg py-4 rounded-full border-2 border-card-border flex items-center justify-center gap-3 mb-3 transition-colors">
             <Medal className="w-6 h-6 text-yellow-400" />
             실시간 순위 보기
           </button>
         </Link>
+
+        {/* Share overall score */}
+        {totalScore > 0 && (
+          <div className="mb-8">
+            <ShareButton
+              payload={{
+                gameName: '학점 포기자 총점',
+                scoreLabel: `${totalScore}점`,
+                detail: `등급 ${tier}`,
+                nickname: player?.nickname ?? '익명',
+                schoolName: player?.schoolName ?? '',
+              }}
+              variant="orange"
+            />
+          </div>
+        )}
 
         {/* Small score cards */}
         <div className="grid grid-cols-2 gap-3 mb-4">

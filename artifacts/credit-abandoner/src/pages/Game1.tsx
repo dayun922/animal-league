@@ -3,6 +3,7 @@ import { Link } from 'wouter';
 import { ChevronLeft } from 'lucide-react';
 import { useGame } from '../contexts/GameContext';
 import { usePlayer } from '../contexts/PlayerContext';
+import { ShareButton } from '../components/ShareButton';
 import { motion, AnimatePresence } from 'framer-motion';
 import professorNoBg from '../assets/professor_nobg.png';
 
@@ -136,7 +137,7 @@ function PlushieBear({ visible }: { visible: boolean }) {
 /* ─── Main game ──────────────────────────────────────────────────── */
 export default function Game1() {
   const { updateScore } = useGame();
-  const { submitGameScore } = usePlayer();
+  const { submitGameScore, player } = usePlayer();
 
   const [gameState, setGameState] = useState<GameState>('IDLE');
   const [round, setRound] = useState(1);
@@ -407,6 +408,18 @@ export default function Game1() {
                   );
                 })()}
                 <div style={{ fontSize: 13, color: '#94a3b8', marginBottom: 24 }}>최종 점수</div>
+                <div style={{ marginBottom: 12 }}>
+                  <ShareButton
+                    payload={{
+                      gameName: '교수님 가방 닫기 ⚡',
+                      scoreLabel: score > 0 ? `${score}점` : '반응 실패',
+                      detail: reactionMs > 0 ? `반응속도 ${reactionMs}ms` : undefined,
+                      nickname: player?.nickname ?? '익명',
+                      schoolName: player?.schoolName ?? '',
+                    }}
+                    variant="light"
+                  />
+                </div>
                 <div style={{ display: 'flex', gap: 12 }}>
                   <button
                     data-testid="btn-retry"

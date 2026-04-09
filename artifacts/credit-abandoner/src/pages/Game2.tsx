@@ -3,6 +3,7 @@ import { Link } from 'wouter';
 import { ChevronLeft } from 'lucide-react';
 import { useGame } from '../contexts/GameContext';
 import { usePlayer } from '../contexts/PlayerContext';
+import { ShareButton } from '../components/ShareButton';
 import classroomBgSrc from '@assets/image_1775732459196.png';
 
 /* ── Constants ─────────────────────────────────────────────── */
@@ -43,7 +44,7 @@ interface Spark { x: number; y: number; vx: number; vy: number; life: number; co
 /* ── Main component ────────────────────────────────────────── */
 export default function Game2() {
   const { updateScore } = useGame();
-  const { submitGameScore } = usePlayer();
+  const { submitGameScore, player } = usePlayer();
   const canvasRef  = useRef<HTMLCanvasElement>(null);
   const rafRef     = useRef<number>(0);
   const bgImgRef   = useRef<HTMLImageElement | null>(null);
@@ -729,6 +730,18 @@ export default function Game2() {
               ))}
             </div>
 
+            <div style={{ marginBottom: 12 }}>
+              <ShareButton
+                payload={{
+                  gameName: 'A+ 받기 특훈 📚',
+                  scoreLabel: `${grade.grade}학점`,
+                  detail: `${dispScore} / ${dispMaxScore}점`,
+                  nickname: player?.nickname ?? '익명',
+                  schoolName: player?.schoolName ?? '',
+                }}
+                variant="light"
+              />
+            </div>
             <div style={{ display: 'flex', gap: 12 }}>
               <button
                 data-testid="btn-retry"
