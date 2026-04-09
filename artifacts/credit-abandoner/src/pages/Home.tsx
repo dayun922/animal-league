@@ -5,12 +5,13 @@ import { useGame } from '../contexts/GameContext';
 import { usePlayer } from '../contexts/PlayerContext';
 import { LionMascot } from '../components/LionMascot';
 import { TierBadge } from '../components/TierBadge';
-import { Play, Trophy, Sparkles, LogOut, Medal } from 'lucide-react';
+import { Play, Trophy, Sparkles, LogOut, Medal, RotateCcw } from 'lucide-react';
 
 export default function Home() {
-  const { totalScore, tier, percentile, scores } = useGame();
+  const { totalScore, tier, percentile, scores, resetScores } = useGame();
   const { player, clearPlayer } = usePlayer();
   const [, navigate] = useLocation();
+  const [confirmReset, setConfirmReset] = React.useState(false);
 
   const handleChangePlayer = () => {
     clearPlayer();
@@ -111,12 +112,12 @@ export default function Home() {
         </Link>
 
         {/* Small score cards */}
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-2 gap-3 mb-4">
           {[
-            { id: 'game1', name: '가방 닫기', score: scores.game1 },
-            { id: 'game2', name: '드랍쉽', score: scores.game2 },
-            { id: 'game3', name: '커피 연타', score: scores.game3 },
-            { id: 'game4', name: '열공 모드', score: scores.game4 },
+            { id: 'game1', name: '가방 닫기',  score: scores.game1 },
+            { id: 'game2', name: '드랍쉽',     score: scores.game2 },
+            { id: 'game3', name: '커피 연타',  score: scores.game3 },
+            { id: 'game4', name: '열공 모드',  score: scores.game4 },
           ].map((game) => (
             <div key={game.id} className="bg-card/80 backdrop-blur-sm p-3 rounded-2xl border border-card-border/50 text-center shadow-sm">
               <div className="text-xs font-bold text-muted-foreground mb-1">{game.name}</div>
@@ -124,6 +125,42 @@ export default function Home() {
             </div>
           ))}
         </div>
+
+        {/* Daily reset notice + manual reset */}
+        {!confirmReset ? (
+          <div className="flex items-center justify-between px-1">
+            <p className="text-xs text-muted-foreground">
+              🕛 매일 자정(KST) 자동 초기화
+            </p>
+            <button
+              onClick={() => setConfirmReset(true)}
+              className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-destructive transition-colors px-2 py-1.5 rounded-lg hover:bg-destructive/10"
+            >
+              <RotateCcw className="w-3.5 h-3.5" />
+              점수 초기화
+            </button>
+          </div>
+        ) : (
+          <div className="bg-destructive/10 border border-destructive/30 rounded-2xl p-4 text-center">
+            <p className="text-sm font-bold text-destructive mb-3">
+              오늘의 BEST 점수를 모두 초기화할까요?
+            </p>
+            <div className="flex gap-2 justify-center">
+              <button
+                onClick={() => { resetScores(); setConfirmReset(false); }}
+                className="px-5 py-2 bg-destructive text-white rounded-full text-sm font-bold"
+              >
+                초기화
+              </button>
+              <button
+                onClick={() => setConfirmReset(false)}
+                className="px-5 py-2 bg-card border border-card-border rounded-full text-sm font-bold text-foreground"
+              >
+                취소
+              </button>
+            </div>
+          </div>
+        )}
       </motion.div>
     </div>
   );

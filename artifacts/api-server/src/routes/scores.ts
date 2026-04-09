@@ -33,11 +33,11 @@ router.post('/scores', async (req, res) => {
 });
 
 /* GET /api/leaderboard?gameId=1&schoolId=2&limit=20
-   Returns top scores for a given game (optionally filtered by school) */
+   오늘(KST 기준) 점수만 표시 */
 router.get('/leaderboard', async (req, res) => {
-  const gameId  = parseInt(req.query['gameId']  as string) || 0;
+  const gameId   = parseInt(req.query['gameId']   as string) || 0;
   const schoolId = parseInt(req.query['schoolId'] as string) || 0;
-  const limit   = Math.min(parseInt(req.query['limit'] as string) || 20, 100);
+  const limit    = Math.min(parseInt(req.query['limit'] as string) || 20, 100);
 
   if (gameId < 1 || gameId > 4) {
     return res.status(400).json({ error: 'gameId 1-4 required' });
@@ -62,7 +62,8 @@ router.get('/leaderboard', async (req, res) => {
        FROM scores s
        LEFT JOIN schools sc ON sc.id = s.school_id
        WHERE s.game_id = $1
-       ${schoolClause}
+         AND DATE(s.played_at AT TIME ZONE 'Asia/Seoul') = CURRENT_DATE AT TIME ZONE 'Asia/Seoul'
+         ${schoolClause}
        ORDER BY s.score DESC
        LIMIT $2`,
       params
@@ -76,7 +77,7 @@ router.get('/leaderboard', async (req, res) => {
 });
 
 /* GET /api/leaderboard/overall?schoolId=2
-   Returns total score per player across all games */
+   오늘(KST 기준) 기준 종합 순위 */
 router.get('/leaderboard/overall', async (req, res) => {
   const schoolId = parseInt(req.query['schoolId'] as string) || 0;
   const limit    = Math.min(parseInt(req.query['limit']    as string) || 20, 100);
@@ -85,26 +86,26 @@ router.get('/leaderboard/overall', async (req, res) => {
     const params: (number | string)[] = [limit];
     let schoolClause = '';
     if (schoolId) {
-      schoolClause = 'AND s.school_id = $2';
+      schoolClause = 'AND best.school_id = $2';
       params.push(schoolId);
     }
 
     const result = await pool.query(
       `SELECT
-         s.nickname,
+         best.nickname,
          sc.name AS school_name,
-         SUM(best.score) AS total_score,
-         RANK() OVER (ORDER BY SUM(best.score) DESC) AS rank
+         SUM(best.best_score) AS total_score,
+         RANK() OVER (ORDER BY SUM(best.best_score) DESC) AS rank
        FROM (
-         SELECT nickname, school_id, game_id, MAX(score) AS score
+         SELECT nickname, school_id, game_id, MAX(score) AS best_score
          FROM scores
+         WHERE DATE(played_at AT TIME ZONE 'Asia/Seoul') = CURRENT_DATE AT TIME ZONE 'Asia/Seoul'
          GROUP BY nickname, school_id, game_id
        ) best
        LEFT JOIN schools sc ON sc.id = best.school_id
-       JOIN scores s ON s.nickname = best.nickname AND s.school_id = best.school_id
        WHERE 1=1
        ${schoolClause}
-       GROUP BY s.nickname, sc.name
+       GROUP BY best.nickname, best.school_id, sc.name
        ORDER BY total_score DESC
        LIMIT $1`,
       params

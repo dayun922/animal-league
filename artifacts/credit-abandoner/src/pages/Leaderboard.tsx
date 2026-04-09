@@ -97,7 +97,10 @@ export default function Leaderboard() {
             <h1 style={{ fontSize: 18, fontWeight: 900, margin: 0, color: '#fbbf24' }}>실시간 순위</h1>
           </div>
           <div style={{ fontSize: 11, color: '#94a3b8', marginTop: 2 }}>
-            {lastRefresh.toLocaleTimeString('ko-KR')} 기준 · 15초 자동 갱신
+            {new Date().toLocaleDateString('ko-KR', { timeZone: 'Asia/Seoul', month: 'long', day: 'numeric' })} 오늘의 순위 · 자정 초기화
+          </div>
+          <div style={{ fontSize: 10, color: '#475569', marginTop: 1 }}>
+            {lastRefresh.toLocaleTimeString('ko-KR')} 갱신 · 15초 자동새로고침
           </div>
         </div>
         <button
