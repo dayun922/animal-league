@@ -16,10 +16,23 @@ interface PlayerContextType {
 
 const STORAGE_KEY = 'creditAbandoner_player';
 
+// ── DB 기능 비활성화 중 ──────────────────────────────────────────
+// DB 기능을 다시 켜려면 아래 상수를 true 로 변경하고
+// App.tsx / Home.tsx 의 DB_FEATURES_ENABLED 주석도 함께 복원하세요.
+export const DB_FEATURES_ENABLED = false;
+
+const ANON_PLAYER: PlayerInfo = {
+  nickname: '익명',
+  schoolId: 0,
+  schoolName: '',
+};
+// ────────────────────────────────────────────────────────────────
+
 const PlayerContext = createContext<PlayerContextType | undefined>(undefined);
 
 export function PlayerProvider({ children }: { children: React.ReactNode }) {
   const [player, setPlayerState] = useState<PlayerInfo | null>(() => {
+    if (!DB_FEATURES_ENABLED) return ANON_PLAYER;
     try {
       const saved = localStorage.getItem(STORAGE_KEY);
       return saved ? JSON.parse(saved) : null;
@@ -35,10 +48,11 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
 
   const clearPlayer = useCallback(() => {
     localStorage.removeItem(STORAGE_KEY);
-    setPlayerState(null);
+    setPlayerState(DB_FEATURES_ENABLED ? null : ANON_PLAYER);
   }, []);
 
   const submitGameScore = useCallback(async (gameId: number, score: number) => {
+    if (!DB_FEATURES_ENABLED) return; // DB 비활성화 중
     if (!player) return;
     try {
       await submitScore({

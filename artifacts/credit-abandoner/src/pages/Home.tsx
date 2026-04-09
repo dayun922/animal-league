@@ -3,6 +3,7 @@ import { Link, useLocation } from 'wouter';
 import { motion } from 'framer-motion';
 import { useGame } from '../contexts/GameContext';
 import { usePlayer } from '../contexts/PlayerContext';
+import { DB_FEATURES_ENABLED } from '../contexts/PlayerContext';
 import { LionMascot } from '../components/LionMascot';
 import { TierBadge } from '../components/TierBadge';
 import { Play, Trophy, Sparkles, LogOut, Medal, RotateCcw } from 'lucide-react';
@@ -29,8 +30,8 @@ export default function Home() {
         <Sparkles className="w-16 h-16" />
       </div>
 
-      {/* Player Info Bar */}
-      {player && (
+      {/* Player Info Bar — DB 기능 활성화 시에만 노출 */}
+      {DB_FEATURES_ENABLED && player && (
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
@@ -104,16 +105,18 @@ export default function Home() {
           </button>
         </Link>
 
-        {/* Leaderboard button */}
-        <Link href="/leaderboard" className="w-full">
-          <button className="w-full bg-card hover:bg-card/80 text-foreground font-bold text-lg py-4 rounded-full border-2 border-card-border flex items-center justify-center gap-3 mb-3 transition-colors">
-            <Medal className="w-6 h-6 text-yellow-400" />
-            실시간 순위 보기
-          </button>
-        </Link>
+        {/* 실시간 순위 버튼 — DB 기능 활성화 시에만 노출 */}
+        {DB_FEATURES_ENABLED && (
+          <Link href="/leaderboard" className="w-full">
+            <button className="w-full bg-card hover:bg-card/80 text-foreground font-bold text-lg py-4 rounded-full border-2 border-card-border flex items-center justify-center gap-3 mb-3 transition-colors">
+              <Medal className="w-6 h-6 text-yellow-400" />
+              실시간 순위 보기
+            </button>
+          </Link>
+        )}
 
-        {/* Share overall score */}
-        {totalScore > 0 && (
+        {/* 에브리타임 공유 — DB 기능 활성화 시에만 노출 (닉네임/학교 정보 필요) */}
+        {DB_FEATURES_ENABLED && totalScore > 0 && (
           <div className="mb-8">
             <ShareButton
               payload={{
@@ -127,6 +130,9 @@ export default function Home() {
             />
           </div>
         )}
+
+        {/* DB 비활성화 중일 때 게임 점수 카드 위 여백 */}
+        {!DB_FEATURES_ENABLED && <div className="mb-8" />}
 
         {/* Small score cards */}
         <div className="grid grid-cols-2 gap-3 mb-4">
