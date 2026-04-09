@@ -204,7 +204,7 @@ export default function Entry() {
               />
             )}
             <div style={{ fontSize: 11, color: '#94a3b8', marginTop: 4 }}>
-              {schools.length > 0 ? `총 ${schools.length}개 대학교` : ''} · 이름으로 검색하세요
+              {schools.length > 0 ? `총 ${schools.length}개 대학교·전문대` : ''} · 이름으로 검색하세요
             </div>
           </div>
 
