@@ -16,8 +16,10 @@ export interface OverallRow {
   rank: number;
 }
 
+const NO_CACHE: RequestInit = { cache: 'no-store' };
+
 export async function fetchSchools(): Promise<School[]> {
-  const r = await fetch(`${API_BASE}/schools`);
+  const r = await fetch(`${API_BASE}/schools`, NO_CACHE);
   if (!r.ok) throw new Error('Failed to fetch schools');
   return r.json();
 }
@@ -32,13 +34,14 @@ export async function submitScore(payload: {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload),
+    cache: 'no-store',
   });
 }
 
 export async function fetchLeaderboard(gameId: number, schoolId?: number, limit = 20): Promise<ScoreRow[]> {
   const params = new URLSearchParams({ gameId: String(gameId), limit: String(limit) });
   if (schoolId) params.set('schoolId', String(schoolId));
-  const r = await fetch(`${API_BASE}/leaderboard?${params}`);
+  const r = await fetch(`${API_BASE}/leaderboard?${params}`, NO_CACHE);
   if (!r.ok) throw new Error('Failed to fetch leaderboard');
   return r.json();
 }
@@ -46,7 +49,7 @@ export async function fetchLeaderboard(gameId: number, schoolId?: number, limit 
 export async function fetchOverall(schoolId?: number, limit = 20): Promise<OverallRow[]> {
   const params = new URLSearchParams({ limit: String(limit) });
   if (schoolId) params.set('schoolId', String(schoolId));
-  const r = await fetch(`${API_BASE}/leaderboard/overall?${params}`);
+  const r = await fetch(`${API_BASE}/leaderboard/overall?${params}`, NO_CACHE);
   if (!r.ok) throw new Error('Failed to fetch overall');
   return r.json();
 }

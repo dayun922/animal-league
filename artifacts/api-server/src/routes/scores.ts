@@ -62,7 +62,7 @@ router.get('/leaderboard', async (req, res) => {
        FROM scores s
        LEFT JOIN schools sc ON sc.id = s.school_id
        WHERE s.game_id = $1
-         AND DATE(s.played_at AT TIME ZONE 'Asia/Seoul') = CURRENT_DATE AT TIME ZONE 'Asia/Seoul'
+         AND DATE(s.played_at AT TIME ZONE 'Asia/Seoul') = (NOW() AT TIME ZONE 'Asia/Seoul')::date
          ${schoolClause}
        ORDER BY s.score DESC
        LIMIT $2`,
@@ -99,7 +99,7 @@ router.get('/leaderboard/overall', async (req, res) => {
        FROM (
          SELECT nickname, school_id, game_id, MAX(score) AS best_score
          FROM scores
-         WHERE DATE(played_at AT TIME ZONE 'Asia/Seoul') = CURRENT_DATE AT TIME ZONE 'Asia/Seoul'
+         WHERE DATE(played_at AT TIME ZONE 'Asia/Seoul') = (NOW() AT TIME ZONE 'Asia/Seoul')::date
          GROUP BY nickname, school_id, game_id
        ) best
        LEFT JOIN schools sc ON sc.id = best.school_id
