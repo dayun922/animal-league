@@ -8,15 +8,16 @@ import classroomBgSrc from '@assets/image_1775732459196.png';
 const GAME_DURATION = 30;
 const CATCH_PTS     = 10;
 const MISS_PTS      = 5;
-// Approx 22 A+'s fall over 30s → max ≈ 220
-const MAX_SCORE     = 220;
 
-function getGrade(score: number) {
-  const r = score / MAX_SCORE;
+function getGrade(score: number, maxScore: number) {
+  if (maxScore <= 0) return { grade: 'F', color: '#dc2626', bg: '#fee2e2', msg: '재수강 확정입니다 💀' };
+  const r = score / maxScore;
   if (r >= 0.90) return { grade: 'A+', color: '#d97706', bg: '#fef3c7', msg: '이 손으로 수강신청 해봐요 👑' };
   if (r >= 0.80) return { grade: 'A',  color: '#059669', bg: '#d1fae5', msg: '좋은 학점이에요! 조금만 더 ✨' };
   if (r >= 0.70) return { grade: 'B+', color: '#2563eb', bg: '#dbeafe', msg: '중상위권 수준이에요 📚' };
   if (r >= 0.60) return { grade: 'B',  color: '#7c3aed', bg: '#ede9fe', msg: '평범한 대학생... 😅' };
+  if (r >= 0.50) return { grade: 'C+', color: '#0891b2', bg: '#cffafe', msg: '절반은 먹었네요... 💧' };
+  if (r >= 0.40) return { grade: 'C',  color: '#65a30d', bg: '#ecfccb', msg: '겨우 턱걸이... 😓' };
                  return { grade: 'F',  color: '#dc2626', bg: '#fee2e2', msg: '재수강 확정입니다 💀' };
 }
 
@@ -56,6 +57,7 @@ export default function Game2() {
   const [dispScore, setDispScore] = useState(0);
   const [dispTime,  setDispTime]  = useState(GAME_DURATION);
   const [hitF, setHitF]           = useState(false);
+  const [dispMaxScore, setDispMaxScore] = useState(0);
 
   /* mutable game state in a single ref — no stale closures */
   const G = useRef({
@@ -74,7 +76,8 @@ export default function Game2() {
     dragOffX:  0,
     canvasW:   0,
     canvasH:   0,
-    forcedF:   false,
+    forcedF:    false,
+    totalAPlus: 0,  // total A+ items spawned (excl. F) — used for max score
   });
 
   /* ── Draw helpers ──────────────────────────────────────── */
@@ -420,6 +423,7 @@ export default function Game2() {
     if (g.frame - g.lastSpawn >= spawnInterval) {
       g.lastSpawn = g.frame;
       const isF = Math.random() < 0.05; // 5% F, 95% A+
+      if (!isF) g.totalAPlus++;        // count catchable A+ items
       g.items.push({
         id: g.nextId++,
         type: isF ? 'F' : 'A+',
@@ -510,6 +514,8 @@ export default function Game2() {
     g.phase = 'END';
     setPhase('END');
     if (g.forcedF) setHitF(true);
+    const maxScore = g.totalAPlus * CATCH_PTS;
+    setDispMaxScore(maxScore);
     updateScore('game2', g.forcedF ? 0 : g.score);
     setDispScore(g.score);
   }, [updateScore]);
@@ -533,8 +539,10 @@ export default function Game2() {
     g.items    = [];
     g.sparks   = [];
     g.nextId   = 0;
-    g.forcedF  = false;
+    g.forcedF   = false;
+    g.totalAPlus = 0;
     setHitF(false);
+    setDispMaxScore(0);
     setPhase('PLAYING');
     setDispScore(0);
     setDispTime(GAME_DURATION);
@@ -580,7 +588,7 @@ export default function Game2() {
   useEffect(() => () => cancelAnimationFrame(rafRef.current), []);
 
   /* ── Render ────────────────────────────────────────────── */
-  const grade = hitF ? getGrade(-1) : getGrade(dispScore);
+  const grade = hitF ? getGrade(-1, 1) : getGrade(dispScore, dispMaxScore);
 
   return (
     <div style={{
@@ -690,18 +698,20 @@ export default function Game2() {
               </div>
               <div>
                 <div style={{ fontSize: 11, color: '#94a3b8', marginBottom: 2 }}>최대 가능</div>
-                <div style={{ fontSize: 38, fontWeight: 900, color: '#94a3b8', fontFamily: 'monospace' }}>{MAX_SCORE}</div>
+                <div style={{ fontSize: 38, fontWeight: 900, color: '#94a3b8', fontFamily: 'monospace' }}>{dispMaxScore}</div>
               </div>
             </div>
 
             {/* Grade scale */}
             <div style={{ background: '#f8fafc', borderRadius: 12, padding: '12px 16px', marginBottom: 24, fontSize: 12 }}>
               {[
-                { g: 'A+', range: '상위 10%', c: '#d97706' },
-                { g: 'A',  range: '10~20%',  c: '#059669' },
-                { g: 'B+', range: '20~30%',  c: '#2563eb' },
-                { g: 'B',  range: '30~40%',  c: '#7c3aed' },
-                { g: 'F',  range: '40% 이하', c: '#dc2626' },
+                { g: 'A+', range: '상위 10%',   c: '#d97706' },
+                { g: 'A',  range: '10 ~ 20%',   c: '#059669' },
+                { g: 'B+', range: '20 ~ 30%',   c: '#2563eb' },
+                { g: 'B',  range: '30 ~ 40%',   c: '#7c3aed' },
+                { g: 'C+', range: '40 ~ 50%',   c: '#0891b2' },
+                { g: 'C',  range: '50 ~ 60%',   c: '#65a30d' },
+                { g: 'F',  range: '60% 미만',    c: '#dc2626' },
               ].map(row => (
                 <div key={row.g} style={{
                   display: 'flex', justifyContent: 'space-between', alignItems: 'center',
