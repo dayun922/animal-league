@@ -23,6 +23,7 @@ function getGrade(score: number) {
 /* ── Types ─────────────────────────────────────────────────── */
 interface APlusItem {
   id: number;
+  type: 'A+' | 'F';
   x: number;   // canvas px
   y: number;
   vy: number;  // px/frame
@@ -54,6 +55,7 @@ export default function Game2() {
   const [phase, setPhase]       = useState<'IDLE'|'PLAYING'|'END'>('IDLE');
   const [dispScore, setDispScore] = useState(0);
   const [dispTime,  setDispTime]  = useState(GAME_DURATION);
+  const [hitF, setHitF]           = useState(false);
 
   /* mutable game state in a single ref — no stale closures */
   const G = useRef({
@@ -72,6 +74,7 @@ export default function Game2() {
     dragOffX:  0,
     canvasW:   0,
     canvasH:   0,
+    forcedF:   false,
   });
 
   /* ── Draw helpers ──────────────────────────────────────── */
@@ -102,7 +105,7 @@ export default function Game2() {
   function drawStudent(ctx: CanvasRenderingContext2D, w: number, h: number, bx: number) {
     const cx = bx;
     const baseY = h * 0.84;
-    const s = h * 0.00168; // scale factor (60% of original — +200% from previous 20%)
+    const s = h * 0.00084; // scale factor (30% of original — 50% of previous)
 
     ctx.save();
     ctx.translate(cx, baseY);
@@ -294,32 +297,49 @@ export default function Game2() {
     ctx.translate(item.x, item.y);
     ctx.rotate(item.rot);
 
-    if (item.caught && item.sparkle > 0) {
+    if (item.type === 'F') {
+      // ── F bomb — red, warning-styled ─────────────────────
+      const r = item.size * 0.75;
+      // Pulsing red glow
+      ctx.shadowColor = '#dc2626';
+      ctx.shadowBlur = 14 + Math.sin(Date.now() * 0.008) * 8;
+      // Red circle bg
+      ctx.fillStyle = '#dc2626';
+      ctx.beginPath(); ctx.arc(0, 0, r, 0, Math.PI * 2); ctx.fill();
+      // Darker ring
+      ctx.strokeStyle = '#7f1d1d';
+      ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.arc(0, 0, r, 0, Math.PI * 2); ctx.stroke();
+      // White F text
+      ctx.shadowBlur = 0;
+      ctx.fillStyle = 'white';
+      ctx.font = `900 ${item.size}px "Noto Sans KR", Georgia, serif`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('F', 0, 1);
+    } else if (item.caught && item.sparkle > 0) {
       const alpha = item.sparkle / 30;
       ctx.globalAlpha = alpha;
-      const s = item.size * (1 + (30 - item.sparkle) * 0.06);
-      // Glow
+      const sz = item.size * (1 + (30 - item.sparkle) * 0.06);
       ctx.shadowColor = '#fbbf24';
       ctx.shadowBlur = 20;
       ctx.fillStyle = `rgba(251,191,36,${alpha})`;
-      ctx.font = `bold ${s}px "Noto Sans KR", serif`;
+      ctx.font = `bold ${sz}px "Noto Sans KR", serif`;
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
       ctx.fillText('A+', 0, 0);
     } else if (!item.caught) {
       ctx.shadowColor = 'rgba(0,0,0,0.15)';
       ctx.shadowBlur = 6;
-      ctx.fillStyle = '#111111';
-      ctx.font = `bold ${item.size}px "Noto Sans KR", Georgia, serif`;
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      ctx.fillText('A+', 0, 0);
-      // Subtle circle background
-      ctx.fillStyle = 'rgba(255,255,255,0.7)';
+      // Circle background
+      ctx.fillStyle = 'rgba(255,255,255,0.75)';
       ctx.beginPath();
       ctx.arc(0, 0, item.size * 0.65, 0, Math.PI * 2);
       ctx.fill();
       ctx.fillStyle = '#111111';
+      ctx.font = `bold ${item.size}px "Noto Sans KR", Georgia, serif`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
       ctx.fillText('A+', 0, 0);
     }
     ctx.restore();
@@ -395,26 +415,27 @@ export default function Game2() {
       return;
     }
 
-    /* spawn — interval decreases from 130 frames → 60 over 30s */
-    const spawnInterval = Math.round(130 - (elapsed / GAME_DURATION) * 70);
+    /* spawn — 3x more items (interval ÷3), 5% chance of F each spawn */
+    const spawnInterval = Math.round(43 - (elapsed / GAME_DURATION) * 23); // was 130→60, now ÷3
     if (g.frame - g.lastSpawn >= spawnInterval) {
       g.lastSpawn = g.frame;
-      const baseSpeed = 10; // constant speed throughout (200% faster, no ramp)
+      const isF = Math.random() < 0.05; // 5% F, 95% A+
       g.items.push({
         id: g.nextId++,
+        type: isF ? 'F' : 'A+',
         x: w * (0.1 + Math.random() * 0.8),
         y: -30,
-        vy: baseSpeed * (0.8 + Math.random() * 0.4),
+        vy: 10 * (0.8 + Math.random() * 0.4),
         rot: (Math.random() - 0.5) * 0.3,
         rotV: (Math.random() - 0.5) * 0.015,
-        size: 26 + Math.random() * 12,
+        size: isF ? 32 + Math.random() * 8 : 26 + Math.random() * 12,
         caught: false, missed: false, sparkle: 0, sx: 0, sy: 0,
       });
     }
 
     /* update items */
-    // Character body bounds (matches drawStudent with scale = h * 0.00168)
-    const charScale  = h * 0.00168;
+    // Character body bounds (matches drawStudent with scale = h * 0.00084)
+    const charScale  = h * 0.00084;
     const baseY      = h * 0.84;
     const charHalfW  = 38 * charScale;  // standing character body width
     const charTop    = baseY - 170 * charScale; // top of head (standing pose)
@@ -434,6 +455,12 @@ export default function Game2() {
       const hitY = item.y >= charTop - item.size * 0.4 && item.y <= baseY;
 
       if (hitX && hitY) {
+        if (item.type === 'F') {
+          // F 충돌 — 즉시 게임 종료, 학점 F 강제
+          g.forcedF = true;
+          endGame();
+          return;
+        }
         item.caught  = true;
         item.sparkle = 30;
         item.sx = item.x; item.sy = item.y;
@@ -482,7 +509,8 @@ export default function Game2() {
     cancelAnimationFrame(rafRef.current);
     g.phase = 'END';
     setPhase('END');
-    updateScore('game2', g.score);
+    if (g.forcedF) setHitF(true);
+    updateScore('game2', g.forcedF ? 0 : g.score);
     setDispScore(g.score);
   }, [updateScore]);
 
@@ -505,6 +533,8 @@ export default function Game2() {
     g.items    = [];
     g.sparks   = [];
     g.nextId   = 0;
+    g.forcedF  = false;
+    setHitF(false);
     setPhase('PLAYING');
     setDispScore(0);
     setDispTime(GAME_DURATION);
@@ -550,7 +580,7 @@ export default function Game2() {
   useEffect(() => () => cancelAnimationFrame(rafRef.current), []);
 
   /* ── Render ────────────────────────────────────────────── */
-  const grade = getGrade(dispScore);
+  const grade = hitF ? getGrade(-1) : getGrade(dispScore);
 
   return (
     <div style={{
@@ -598,9 +628,13 @@ export default function Game2() {
           </h1>
           <p style={{ color: 'rgba(255,255,255,0.7)', textAlign: 'center', lineHeight: 1.7, marginBottom: 8 }}>
             하늘에서 <b style={{ color: '#fbbf24' }}>A+</b>이 떨어집니다!<br />
-            <b style={{ color: '#34d399' }}>드래그</b>로 바구니를 움직여 받으세요.
+            <b style={{ color: '#34d399' }}>드래그</b>로 캐릭터를 움직여 받으세요.
           </p>
-          <p style={{ color: '#f87171', fontSize: 13, marginBottom: 32 }}>놓치면 <b>-{MISS_PTS}점</b> 감점!</p>
+          <p style={{ color: '#f87171', fontSize: 13, marginBottom: 4 }}>놓치면 <b>-{MISS_PTS}점</b> 감점!</p>
+          <p style={{ color: '#ef4444', fontSize: 13, fontWeight: 900, marginBottom: 32,
+            background: 'rgba(239,68,68,0.15)', padding: '6px 16px', borderRadius: 20, border: '1px solid rgba(239,68,68,0.4)' }}>
+            🚨 빨간 <b>F</b>에 닿으면 즉시 게임 오버!
+          </p>
           <button
             data-testid="btn-start"
             onClick={startGame}
@@ -631,6 +665,16 @@ export default function Game2() {
             <div style={{ fontSize: 80, fontWeight: 900, color: grade.color, lineHeight: 1, marginBottom: 4 }}>
               {grade.grade}
             </div>
+            {hitF && (
+              <div style={{
+                display: 'inline-block',
+                background: '#7f1d1d', color: 'white',
+                fontWeight: 900, fontSize: 13, padding: '4px 14px',
+                borderRadius: 20, marginBottom: 8,
+              }}>
+                💀 F학점에 닿아서 즉시 아웃!
+              </div>
+            )}
             <div style={{
               display: 'inline-block',
               background: grade.bg, color: grade.color,
