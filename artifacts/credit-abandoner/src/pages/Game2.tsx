@@ -133,7 +133,7 @@ export default function Game2() {
   function drawStudent(ctx: CanvasRenderingContext2D, w: number, h: number, bx: number) {
     const cx = bx;
     const baseY = h * 0.84;
-    const scale = h * 0.0028;
+    const scale = h * 0.00224; // 0.0028 * 0.8
 
     ctx.save();
     ctx.translate(cx, baseY);
@@ -366,7 +366,7 @@ export default function Game2() {
     const spawnInterval = Math.round(130 - (elapsed / GAME_DURATION) * 70);
     if (g.frame - g.lastSpawn >= spawnInterval) {
       g.lastSpawn = g.frame;
-      const baseSpeed = 2.5 + (elapsed / GAME_DURATION) * 3.5;
+      const baseSpeed = (2.5 + (elapsed / GAME_DURATION) * 3.5) * 1.1;
       g.items.push({
         id: g.nextId++,
         x: w * (0.1 + Math.random() * 0.8),
@@ -380,12 +380,11 @@ export default function Game2() {
     }
 
     /* update items */
-    const catchY = h * 0.84 - h * 0.148 * 2.8 * 0.0028 * 130; // basket tray height in px
-    // The basket catch line is at student's raised hands
-    const catchLine = h * 0.84 - h * 0.148 * 0.0028 * 148 * 2.8;
-    // Simpler: basket top is ~15% above floor
-    const basketTop = h * 0.84 - h * 0.155;
-    const bw2 = g.basketW / 2;
+    // Character body bounds (matches drawStudent with scale = h * 0.00224)
+    const charScale  = h * 0.00224;
+    const baseY      = h * 0.84;
+    const charHalfW  = 45 * charScale;  // slightly wider than torso for forgiveness
+    const charTop    = baseY - 165 * charScale; // top of head
 
     for (const item of g.items) {
       if (item.caught) {
@@ -397,9 +396,9 @@ export default function Game2() {
       item.y  += item.vy;
       item.rot += item.rotV;
 
-      // Catch detection — horizontal: within basket width, vertical: crosses basket top
-      const hitX = Math.abs(item.x - g.basketX) < bw2 + item.size * 0.4;
-      const hitY = item.y >= basketTop - item.size * 0.4 && item.y < basketTop + 20;
+      // Catch detection — A+ touches anywhere on the character body
+      const hitX = Math.abs(item.x - g.basketX) < charHalfW + item.size * 0.35;
+      const hitY = item.y >= charTop - item.size * 0.4 && item.y <= baseY;
 
       if (hitX && hitY) {
         item.caught  = true;
