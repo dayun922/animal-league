@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Link } from 'wouter';
 import { ChevronLeft } from 'lucide-react';
 import { useGame } from '../contexts/GameContext';
+import { usePlayer } from '../contexts/PlayerContext';
 import { motion, AnimatePresence } from 'framer-motion';
 import { LionMascot } from '../components/LionMascot';
 import { ShareCard } from '../components/ShareCard';
@@ -46,7 +47,8 @@ const ALL_TAUNTS = [...TAUNTS_QUOTES, ...TAUNTS_FACTS];
 
 export default function Game4() {
   const { updateScore, tier, percentile } = useGame();
-  
+  const { submitGameScore } = usePlayer();
+
   const [gameState, setGameState] = useState<'IDLE' | 'PLAYING' | 'END'>('IDLE');
   const [timeLeft, setTimeLeft] = useState(300);
   const [penalties, setPenalties] = useState(0);
@@ -91,6 +93,7 @@ export default function Game4() {
     const score = Math.max(0, 500 - currentPenalties * 10);
     setFinalScore(score);
     updateScore('game4', score);
+    submitGameScore(4, score);
     setWorstTaunt(currentTaunt);
     if (timerRef.current) clearInterval(timerRef.current);
     if (tauntTimerRef.current) clearInterval(tauntTimerRef.current);

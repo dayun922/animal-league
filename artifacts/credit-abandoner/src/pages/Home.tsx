@@ -1,16 +1,24 @@
 import React from 'react';
-import { Link } from 'wouter';
+import { Link, useLocation } from 'wouter';
 import { motion } from 'framer-motion';
 import { useGame } from '../contexts/GameContext';
+import { usePlayer } from '../contexts/PlayerContext';
 import { LionMascot } from '../components/LionMascot';
 import { TierBadge } from '../components/TierBadge';
-import { Play, Trophy, Sparkles } from 'lucide-react';
+import { Play, Trophy, Sparkles, LogOut, Medal } from 'lucide-react';
 
 export default function Home() {
   const { totalScore, tier, percentile, scores } = useGame();
+  const { player, clearPlayer } = usePlayer();
+  const [, navigate] = useLocation();
+
+  const handleChangePlayer = () => {
+    clearPlayer();
+    navigate('/entry');
+  };
 
   return (
-    <div className="min-h-[100dvh] w-full bg-background flex flex-col items-center py-10 px-4 relative overflow-hidden">
+    <div className="min-h-[100dvh] w-full bg-background flex flex-col items-center py-8 px-4 relative overflow-hidden">
       {/* Background decorations */}
       <div className="absolute top-10 left-10 text-yellow-400 opacity-50">
         <Sparkles className="w-12 h-12" />
@@ -18,6 +26,30 @@ export default function Home() {
       <div className="absolute bottom-20 right-10 text-primary opacity-30">
         <Sparkles className="w-16 h-16" />
       </div>
+
+      {/* Player Info Bar */}
+      {player && (
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="w-full max-w-md mb-4 z-10"
+        >
+          <div className="bg-card/80 backdrop-blur-sm border border-card-border/60 rounded-2xl px-4 py-2.5 flex items-center justify-between">
+            <div>
+              <span className="text-muted-foreground text-xs">플레이어</span>
+              <div className="font-black text-foreground text-base">{player.nickname}</div>
+              <div className="text-xs text-muted-foreground">{player.schoolName}</div>
+            </div>
+            <button
+              onClick={handleChangePlayer}
+              className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors px-2 py-1.5 rounded-lg hover:bg-muted/40"
+            >
+              <LogOut className="w-3.5 h-3.5" />
+              변경
+            </button>
+          </div>
+        </motion.div>
+      )}
 
       <motion.div
         initial={{ opacity: 0, y: -20 }}
@@ -64,9 +96,17 @@ export default function Home() {
         className="z-10 w-full max-w-md"
       >
         <Link href="/select" className="w-full">
-          <button data-testid="btn-start" className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-black text-2xl py-6 rounded-full shadow-[0_8px_0_hsl(15,90%,45%)] active:shadow-[0_0px_0_hsl(15,90%,45%)] active:translate-y-[8px] transition-all flex items-center justify-center gap-3 mb-10">
+          <button data-testid="btn-start" className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-black text-2xl py-6 rounded-full shadow-[0_8px_0_hsl(15,90%,45%)] active:shadow-[0_0px_0_hsl(15,90%,45%)] active:translate-y-[8px] transition-all flex items-center justify-center gap-3 mb-4">
             <Play fill="currentColor" className="w-8 h-8" />
             게임 시작하기
+          </button>
+        </Link>
+
+        {/* Leaderboard button */}
+        <Link href="/leaderboard" className="w-full">
+          <button className="w-full bg-card hover:bg-card/80 text-foreground font-bold text-lg py-4 rounded-full border-2 border-card-border flex items-center justify-center gap-3 mb-8 transition-colors">
+            <Medal className="w-6 h-6 text-yellow-400" />
+            실시간 순위 보기
           </button>
         </Link>
 

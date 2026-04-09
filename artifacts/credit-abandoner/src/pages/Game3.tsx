@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'wouter';
 import { ChevronLeft, Coffee, Zap } from 'lucide-react';
 import { useGame } from '../contexts/GameContext';
+import { usePlayer } from '../contexts/PlayerContext';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const LIVE_RANKINGS = [
@@ -33,7 +34,8 @@ const getMania = (clicks: number) => {
 
 export default function Game3() {
   const { updateScore } = useGame();
-  
+  const { submitGameScore } = usePlayer();
+
   const [gameState, setGameState] = useState<'IDLE' | 'PLAYING' | 'END'>('IDLE');
   const [timeLeft, setTimeLeft] = useState(10);
   const [clicks, setClicks] = useState(0);
@@ -52,6 +54,7 @@ export default function Game3() {
     } else if (gameState === 'PLAYING' && timeLeft === 0) {
       setGameState('END');
       updateScore('game3', clicksRef.current);
+      submitGameScore(3, clicksRef.current);
     }
     return () => clearInterval(timer);
   }, [gameState, timeLeft, updateScore]);

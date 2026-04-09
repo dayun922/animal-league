@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'wouter';
 import { ChevronLeft } from 'lucide-react';
 import { useGame } from '../contexts/GameContext';
+import { usePlayer } from '../contexts/PlayerContext';
 import { motion, AnimatePresence } from 'framer-motion';
 import professorNoBg from '../assets/professor_nobg.png';
 
@@ -135,6 +136,7 @@ function PlushieBear({ visible }: { visible: boolean }) {
 /* ─── Main game ──────────────────────────────────────────────────── */
 export default function Game1() {
   const { updateScore } = useGame();
+  const { submitGameScore } = usePlayer();
 
   const [gameState, setGameState] = useState<GameState>('IDLE');
   const [round, setRound] = useState(1);
@@ -214,6 +216,7 @@ export default function Game1() {
   const endGame = () => {
     setState('END');
     updateScore('game1', currentScoreRef.current);
+    submitGameScore(1, currentScoreRef.current);
   };
 
   const startGame = () => {

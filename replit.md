@@ -42,4 +42,7 @@ See the `pnpm-workspace` skill for workspace structure, TypeScript setup, and pa
   - 8-tier ranking system (제적 위기 → 명예 교수) based on percentile
   - localStorage persistence for all scores and tiers
 - **Tech**: React + Vite, Tailwind CSS, framer-motion, wouter, lucide-react
-- **State**: Global GameContext (no backend needed)
+- **State**: GameContext (local scores/tier) + PlayerContext (nickname/schoolId, localStorage)
+- **Backend**: PostgreSQL `schools` (16 universities) + `scores` tables; API at `/api`
+- **Routes**: `/entry` (player setup) → `/` (home) → `/select` → `/game1-4`, `/leaderboard`
+- **Leaderboard**: Real-time, 15s auto-refresh, per-game or overall, filterable by school

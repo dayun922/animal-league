@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Link } from 'wouter';
 import { ChevronLeft } from 'lucide-react';
 import { useGame } from '../contexts/GameContext';
+import { usePlayer } from '../contexts/PlayerContext';
 import classroomBgSrc from '@assets/image_1775732459196.png';
 
 /* ── Constants ─────────────────────────────────────────────── */
@@ -42,6 +43,7 @@ interface Spark { x: number; y: number; vx: number; vy: number; life: number; co
 /* ── Main component ────────────────────────────────────────── */
 export default function Game2() {
   const { updateScore } = useGame();
+  const { submitGameScore } = usePlayer();
   const canvasRef  = useRef<HTMLCanvasElement>(null);
   const rafRef     = useRef<number>(0);
   const bgImgRef   = useRef<HTMLImageElement | null>(null);
@@ -517,8 +519,9 @@ export default function Game2() {
     const maxScore = g.totalAPlus * CATCH_PTS;
     setDispMaxScore(maxScore);
     updateScore('game2', g.forcedF ? 0 : g.score);
+    submitGameScore(2, g.forcedF ? 0 : g.score);
     setDispScore(g.score);
-  }, [updateScore]);
+  }, [updateScore, submitGameScore]);
 
   const startGame = useCallback(() => {
     const canvas = canvasRef.current;
