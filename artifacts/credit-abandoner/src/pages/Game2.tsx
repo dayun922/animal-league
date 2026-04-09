@@ -102,124 +102,195 @@ export default function Game2() {
   function drawStudent(ctx: CanvasRenderingContext2D, w: number, h: number, bx: number) {
     const cx = bx;
     const baseY = h * 0.84;
-    const scale = h * 0.00056; // 0.0028 * 0.2
+    const s = h * 0.00056; // scale factor (20% of original)
 
     ctx.save();
     ctx.translate(cx, baseY);
-
-    // Shadow
-    ctx.fillStyle = 'rgba(0,0,0,0.15)';
-    ctx.beginPath();
-    ctx.ellipse(0, 0, 38 * scale, 8 * scale, 0, 0, Math.PI * 2);
-    ctx.fill();
-
-    // Legs
-    ctx.fillStyle = '#4a3a6a';
-    ctx.fillRect(-14 * scale, -60 * scale, 11 * scale, 42 * scale);
-    ctx.fillRect(3 * scale,   -60 * scale, 11 * scale, 42 * scale);
-    // Shoes
-    ctx.fillStyle = '#2a2a2a';
-    ctx.beginPath(); ctx.ellipse(-8 * scale,  -18 * scale, 10 * scale, 5 * scale, 0, 0, Math.PI * 2); ctx.fill();
-    ctx.beginPath(); ctx.ellipse(9 * scale,   -18 * scale, 10 * scale, 5 * scale, 0, 0, Math.PI * 2); ctx.fill();
-
-    // Torso — school jacket
-    ctx.fillStyle = '#3a3a5a';
-    ctx.beginPath();
-    ctx.roundRect(-20 * scale, -110 * scale, 40 * scale, 52 * scale, 4 * scale);
-    ctx.fill();
-    // Collar/shirt
-    ctx.fillStyle = '#e8e8f0';
-    ctx.beginPath();
-    ctx.moveTo(-6 * scale, -110 * scale);
-    ctx.lineTo(0, -100 * scale);
-    ctx.lineTo(6 * scale, -110 * scale);
-    ctx.fill();
-    // Tie
-    ctx.fillStyle = '#c0392b';
-    ctx.beginPath();
-    ctx.moveTo(-3 * scale, -105 * scale);
-    ctx.lineTo(3 * scale,  -105 * scale);
-    ctx.lineTo(5 * scale,  -80 * scale);
-    ctx.lineTo(0,          -75 * scale);
-    ctx.lineTo(-5 * scale, -80 * scale);
-    ctx.closePath();
-    ctx.fill();
-
-    // Bag (right side)
-    ctx.fillStyle = '#8b6914';
-    ctx.beginPath();
-    ctx.roundRect(20 * scale, -105 * scale, 22 * scale, 30 * scale, 3 * scale);
-    ctx.fill();
-    ctx.fillStyle = '#a07820';
-    ctx.fillRect(20 * scale, -95 * scale, 22 * scale, 4 * scale);
-    ctx.fillStyle = '#c49428';
-    ctx.beginPath();
-    ctx.arc(31 * scale, -90 * scale, 3 * scale, 0, Math.PI * 2);
-    ctx.fill();
-
-    // Arms — extended upward to catch
-    ctx.strokeStyle = '#3a3a5a';
-    ctx.lineWidth = 10 * scale;
     ctx.lineCap = 'round';
-    // Left arm up
-    ctx.beginPath();
-    ctx.moveTo(-18 * scale, -100 * scale);
-    ctx.lineTo(-32 * scale, -140 * scale);
-    ctx.stroke();
-    // Right arm up
-    ctx.beginPath();
-    ctx.moveTo(18 * scale, -100 * scale);
-    ctx.lineTo(32 * scale, -140 * scale);
-    ctx.stroke();
+    ctx.lineJoin = 'round';
 
-    // Hands (baskets)
-    ctx.fillStyle = '#f0c8a0';
-    ctx.beginPath(); ctx.arc(-32 * scale, -142 * scale, 7 * scale, 0, Math.PI * 2); ctx.fill();
-    ctx.beginPath(); ctx.arc( 32 * scale, -142 * scale, 7 * scale, 0, Math.PI * 2); ctx.fill();
-
-    // Basket tray between hands
-    ctx.fillStyle = 'rgba(255,220,100,0.25)';
-    ctx.strokeStyle = '#e0a020';
-    ctx.lineWidth = 2 * scale;
+    // ── Ground shadow ─────────────────────────────────────
+    ctx.fillStyle = 'rgba(0,0,0,0.13)';
     ctx.beginPath();
-    ctx.moveTo(-40 * scale, -148 * scale);
-    ctx.lineTo( 40 * scale, -148 * scale);
-    ctx.lineTo( 36 * scale, -130 * scale);
-    ctx.lineTo(-36 * scale, -130 * scale);
+    ctx.ellipse(0, 0, 32 * s, 6 * s, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    // ── Backpack (behind character — draw first so body goes on top) ──
+    // Pack body (slightly right of center, peeking from behind)
+    ctx.fillStyle = '#8b7355';
+    ctx.beginPath();
+    ctx.roundRect(14 * s, -110 * s, 26 * s, 38 * s, 4 * s);
+    ctx.fill();
+    ctx.strokeStyle = '#6b5335';
+    ctx.lineWidth = 1 * s;
+    ctx.stroke();
+    // Pack top flap — OPEN (flipped back)
+    ctx.fillStyle = '#a08860';
+    ctx.beginPath();
+    ctx.moveTo(14 * s, -110 * s);
+    ctx.lineTo(40 * s, -110 * s);
+    ctx.lineTo(44 * s, -122 * s);
+    ctx.lineTo(10 * s, -122 * s);
     ctx.closePath();
     ctx.fill();
+    ctx.strokeStyle = '#6b5335';
+    ctx.lineWidth = 0.8 * s;
+    ctx.stroke();
+    // Inside of empty bag (dark hollow)
+    ctx.fillStyle = '#3a2a18';
+    ctx.beginPath();
+    ctx.roundRect(17 * s, -108 * s, 20 * s, 12 * s, 2 * s);
+    ctx.fill();
+    // Pocket detail
+    ctx.fillStyle = '#6b5335';
+    ctx.beginPath();
+    ctx.roundRect(18 * s, -98 * s, 18 * s, 14 * s, 3 * s);
+    ctx.fill();
+    // Buckle
+    ctx.fillStyle = '#c8a050';
+    ctx.fillRect(24 * s, -94 * s, 6 * s, 3 * s);
+
+    // ── Shoes ─────────────────────────────────────────────
+    ctx.fillStyle = '#222222';
+    // Left shoe
+    ctx.beginPath();
+    ctx.roundRect(-18 * s, -12 * s, 16 * s, 10 * s, 3 * s);
+    ctx.fill();
+    // Right shoe
+    ctx.beginPath();
+    ctx.roundRect(2 * s, -12 * s, 16 * s, 10 * s, 3 * s);
+    ctx.fill();
+    // White sole line
+    ctx.strokeStyle = 'rgba(255,255,255,0.3)';
+    ctx.lineWidth = 1 * s;
+    ctx.beginPath(); ctx.moveTo(-18 * s, -6 * s); ctx.lineTo(-2 * s, -6 * s); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(2 * s,   -6 * s); ctx.lineTo(18 * s, -6 * s); ctx.stroke();
+
+    // ── Pants (dark navy) ─────────────────────────────────
+    ctx.fillStyle = '#2c3060';
+    ctx.beginPath();
+    ctx.roundRect(-16 * s, -65 * s, 14 * s, 54 * s, 2 * s);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.roundRect(2 * s, -65 * s, 14 * s, 54 * s, 2 * s);
+    ctx.fill();
+    // Pants crease highlight
+    ctx.strokeStyle = 'rgba(255,255,255,0.08)';
+    ctx.lineWidth = 1 * s;
+    ctx.beginPath(); ctx.moveTo(-9 * s, -60 * s); ctx.lineTo(-9 * s, -16 * s); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(9 * s,  -60 * s); ctx.lineTo(9 * s,  -16 * s); ctx.stroke();
+
+    // ── Sweater body (khaki/tan — like the reference) ─────
+    ctx.fillStyle = '#c8a870';
+    ctx.beginPath();
+    ctx.roundRect(-20 * s, -120 * s, 40 * s, 58 * s, 5 * s);
+    ctx.fill();
+    // Sweater horizontal stripes (inner shirt peeking at collar/waist)
+    ctx.strokeStyle = '#b09050';
+    ctx.lineWidth = 2.5 * s;
+    for (let i = 0; i < 4; i++) {
+      const sy2 = -112 * s + i * 9 * s;
+      ctx.beginPath();
+      ctx.moveTo(-18 * s, sy2);
+      ctx.lineTo(18 * s, sy2);
+      ctx.stroke();
+    }
+    // Waistband
+    ctx.fillStyle = '#a08040';
+    ctx.fillRect(-20 * s, -68 * s, 40 * s, 6 * s);
+
+    // Backpack shoulder straps (visible on chest)
+    ctx.strokeStyle = '#6b5335';
+    ctx.lineWidth = 3 * s;
+    ctx.beginPath();
+    ctx.moveTo(-6 * s, -118 * s);
+    ctx.bezierCurveTo(-6 * s, -100 * s, -10 * s, -90 * s, -8 * s, -70 * s);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(14 * s, -118 * s);
+    ctx.bezierCurveTo(14 * s, -100 * s, 12 * s, -90 * s, 10 * s, -70 * s);
     ctx.stroke();
 
-    // Head
+    // ── Arms (hanging naturally at sides) ─────────────────
+    // Left arm
+    ctx.fillStyle = '#c8a870';
+    ctx.beginPath();
+    ctx.roundRect(-32 * s, -118 * s, 13 * s, 48 * s, 6 * s);
+    ctx.fill();
+    // Right arm
+    ctx.beginPath();
+    ctx.roundRect(19 * s, -118 * s, 13 * s, 48 * s, 6 * s);
+    ctx.fill();
+    // Hands
+    ctx.fillStyle = '#f0c8a0';
+    ctx.beginPath(); ctx.ellipse(-26 * s, -70 * s, 7 * s, 8 * s, 0, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(26 * s,  -70 * s, 7 * s, 8 * s, 0, 0, Math.PI * 2); ctx.fill();
+
+    // ── Head ─────────────────────────────────────────────
     ctx.fillStyle = '#f0c8a0';
     ctx.beginPath();
-    ctx.ellipse(0, -138 * scale, 22 * scale, 24 * scale, 0, 0, Math.PI * 2);
+    ctx.ellipse(0, -144 * s, 20 * s, 22 * s, 0, 0, Math.PI * 2);
     ctx.fill();
-    // Hair
-    ctx.fillStyle = '#1a1a1a';
-    ctx.beginPath();
-    ctx.ellipse(0, -153 * scale, 22 * scale, 13 * scale, 0, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.fillRect(-22 * scale, -155 * scale, 44 * scale, 12 * scale);
 
-    // Eyes (glasses)
-    ctx.strokeStyle = '#2a1a0a';
-    ctx.lineWidth = 1.5 * scale;
-    ctx.fillStyle = 'rgba(200,230,255,0.5)';
-    ctx.beginPath(); ctx.roundRect(-14 * scale, -143 * scale, 11 * scale, 8 * scale, 2 * scale); ctx.fill(); ctx.stroke();
-    ctx.beginPath(); ctx.roundRect(  3 * scale, -143 * scale, 11 * scale, 8 * scale, 2 * scale); ctx.fill(); ctx.stroke();
-    // Glasses bridge
-    ctx.beginPath(); ctx.moveTo(-3 * scale, -140 * scale); ctx.lineTo(3 * scale, -140 * scale); ctx.stroke();
-    // Pupils
-    ctx.fillStyle = '#1a1208';
-    ctx.beginPath(); ctx.arc(-8 * scale, -139 * scale, 2.5 * scale, 0, Math.PI * 2); ctx.fill();
-    ctx.beginPath(); ctx.arc( 8 * scale, -139 * scale, 2.5 * scale, 0, Math.PI * 2); ctx.fill();
-    // Smile
-    ctx.strokeStyle = '#8b4a20';
-    ctx.lineWidth = 1.5 * scale;
+    // Neck
+    ctx.fillStyle = '#e8b890';
+    ctx.fillRect(-5 * s, -124 * s, 10 * s, 8 * s);
+
+    // ── Hair (black, tousled style like reference) ────────
+    ctx.fillStyle = '#1a1a1a';
+    // Hair cap
     ctx.beginPath();
-    ctx.arc(0, -130 * scale, 7 * scale, 0.1, Math.PI - 0.1);
+    ctx.ellipse(0, -154 * s, 21 * s, 14 * s, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillRect(-21 * s, -154 * s, 42 * s, 14 * s);
+    // Side tufts
+    ctx.beginPath();
+    ctx.ellipse(-18 * s, -146 * s, 6 * s, 10 * s, -0.3, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.ellipse(18 * s, -146 * s, 6 * s, 10 * s, 0.3, 0, Math.PI * 2);
+    ctx.fill();
+    // Front hair swoosh
+    ctx.beginPath();
+    ctx.moveTo(-10 * s, -162 * s);
+    ctx.bezierCurveTo(-6 * s, -168 * s, 4 * s, -168 * s, 8 * s, -162 * s);
+    ctx.bezierCurveTo(4 * s, -156 * s, -6 * s, -158 * s, -10 * s, -162 * s);
+    ctx.fill();
+
+    // ── Glasses ───────────────────────────────────────────
+    ctx.strokeStyle = '#2a1a0a';
+    ctx.lineWidth = 1.5 * s;
+    ctx.fillStyle = 'rgba(180,220,255,0.45)';
+    // Left lens
+    ctx.beginPath(); ctx.roundRect(-14 * s, -149 * s, 11 * s, 9 * s, 2.5 * s); ctx.fill(); ctx.stroke();
+    // Right lens
+    ctx.beginPath(); ctx.roundRect(3 * s, -149 * s, 11 * s, 9 * s, 2.5 * s); ctx.fill(); ctx.stroke();
+    // Bridge
+    ctx.beginPath(); ctx.moveTo(-3 * s, -145 * s); ctx.lineTo(3 * s, -145 * s); ctx.stroke();
+    // Side temples
+    ctx.beginPath(); ctx.moveTo(-14 * s, -145 * s); ctx.lineTo(-20 * s, -144 * s); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(14 * s,  -145 * s); ctx.lineTo(20 * s,  -144 * s); ctx.stroke();
+    // Pupils — looking straight forward
+    ctx.fillStyle = '#1a1208';
+    ctx.beginPath(); ctx.arc(-8.5 * s, -145 * s, 2.5 * s, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.arc(8.5 * s,  -145 * s, 2.5 * s, 0, Math.PI * 2); ctx.fill();
+    // Shine dot
+    ctx.fillStyle = 'white';
+    ctx.beginPath(); ctx.arc(-7 * s, -147 * s, 0.8 * s, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.arc(10 * s, -147 * s, 0.8 * s, 0, Math.PI * 2); ctx.fill();
+
+    // Mouth — slight neutral/alert expression
+    ctx.strokeStyle = '#8b4a20';
+    ctx.lineWidth = 1.2 * s;
+    ctx.beginPath();
+    ctx.moveTo(-4 * s, -134 * s);
+    ctx.lineTo(4 * s,  -134 * s);
     ctx.stroke();
+
+    // ── Ear details ───────────────────────────────────────
+    ctx.fillStyle = '#e8b890';
+    ctx.beginPath(); ctx.ellipse(-20 * s, -143 * s, 4 * s, 6 * s, 0, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(20 * s,  -143 * s, 4 * s, 6 * s, 0, 0, Math.PI * 2); ctx.fill();
 
     ctx.restore();
   }
@@ -352,8 +423,8 @@ export default function Game2() {
     // Character body bounds (matches drawStudent with scale = h * 0.00056)
     const charScale  = h * 0.00056;
     const baseY      = h * 0.84;
-    const charHalfW  = 45 * charScale;  // slightly wider than torso for forgiveness
-    const charTop    = baseY - 165 * charScale; // top of head
+    const charHalfW  = 38 * charScale;  // standing character body width
+    const charTop    = baseY - 170 * charScale; // top of head (standing pose)
 
     for (const item of g.items) {
       if (item.caught) {
