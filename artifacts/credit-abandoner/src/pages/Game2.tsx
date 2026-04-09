@@ -102,7 +102,7 @@ export default function Game2() {
   function drawStudent(ctx: CanvasRenderingContext2D, w: number, h: number, bx: number) {
     const cx = bx;
     const baseY = h * 0.84;
-    const s = h * 0.00056; // scale factor (20% of original)
+    const s = h * 0.00168; // scale factor (60% of original — +200% from previous 20%)
 
     ctx.save();
     ctx.translate(cx, baseY);
@@ -114,41 +114,6 @@ export default function Game2() {
     ctx.beginPath();
     ctx.ellipse(0, 0, 32 * s, 6 * s, 0, 0, Math.PI * 2);
     ctx.fill();
-
-    // ── Backpack (behind character — draw first so body goes on top) ──
-    // Pack body (slightly right of center, peeking from behind)
-    ctx.fillStyle = '#8b7355';
-    ctx.beginPath();
-    ctx.roundRect(14 * s, -110 * s, 26 * s, 38 * s, 4 * s);
-    ctx.fill();
-    ctx.strokeStyle = '#6b5335';
-    ctx.lineWidth = 1 * s;
-    ctx.stroke();
-    // Pack top flap — OPEN (flipped back)
-    ctx.fillStyle = '#a08860';
-    ctx.beginPath();
-    ctx.moveTo(14 * s, -110 * s);
-    ctx.lineTo(40 * s, -110 * s);
-    ctx.lineTo(44 * s, -122 * s);
-    ctx.lineTo(10 * s, -122 * s);
-    ctx.closePath();
-    ctx.fill();
-    ctx.strokeStyle = '#6b5335';
-    ctx.lineWidth = 0.8 * s;
-    ctx.stroke();
-    // Inside of empty bag (dark hollow)
-    ctx.fillStyle = '#3a2a18';
-    ctx.beginPath();
-    ctx.roundRect(17 * s, -108 * s, 20 * s, 12 * s, 2 * s);
-    ctx.fill();
-    // Pocket detail
-    ctx.fillStyle = '#6b5335';
-    ctx.beginPath();
-    ctx.roundRect(18 * s, -98 * s, 18 * s, 14 * s, 3 * s);
-    ctx.fill();
-    // Buckle
-    ctx.fillStyle = '#c8a050';
-    ctx.fillRect(24 * s, -94 * s, 6 * s, 3 * s);
 
     // ── Shoes ─────────────────────────────────────────────
     ctx.fillStyle = '#222222';
@@ -199,17 +164,44 @@ export default function Game2() {
     ctx.fillStyle = '#a08040';
     ctx.fillRect(-20 * s, -68 * s, 40 * s, 6 * s);
 
-    // Backpack shoulder straps (visible on chest)
-    ctx.strokeStyle = '#6b5335';
-    ctx.lineWidth = 3 * s;
+    // ── Front crossbody messenger bag ─────────────────────
+    // Diagonal shoulder strap (left shoulder to right hip)
+    ctx.strokeStyle = '#5a4020';
+    ctx.lineWidth = 3.5 * s;
     ctx.beginPath();
-    ctx.moveTo(-6 * s, -118 * s);
-    ctx.bezierCurveTo(-6 * s, -100 * s, -10 * s, -90 * s, -8 * s, -70 * s);
+    ctx.moveTo(-10 * s, -120 * s);
+    ctx.bezierCurveTo(-6 * s, -95 * s, 8 * s, -85 * s, 18 * s, -72 * s);
     ctx.stroke();
+    // Bag body hanging at front-right hip
+    ctx.fillStyle = '#7a5c30';
     ctx.beginPath();
-    ctx.moveTo(14 * s, -118 * s);
-    ctx.bezierCurveTo(14 * s, -100 * s, 12 * s, -90 * s, 10 * s, -70 * s);
+    ctx.roundRect(6 * s, -78 * s, 30 * s, 22 * s, 4 * s);
+    ctx.fill();
+    ctx.strokeStyle = '#5a3c10';
+    ctx.lineWidth = 1 * s;
     ctx.stroke();
+    // Bag flap (open, slightly raised — empty inside)
+    ctx.fillStyle = '#8a6c40';
+    ctx.beginPath();
+    ctx.moveTo(6 * s,  -78 * s);
+    ctx.lineTo(36 * s, -78 * s);
+    ctx.lineTo(34 * s, -88 * s);
+    ctx.lineTo(8 * s,  -88 * s);
+    ctx.closePath();
+    ctx.fill();
+    ctx.strokeStyle = '#5a3c10';
+    ctx.lineWidth = 0.8 * s;
+    ctx.stroke();
+    // Empty inside (dark)
+    ctx.fillStyle = '#2a1a08';
+    ctx.beginPath();
+    ctx.roundRect(9 * s, -76 * s, 24 * s, 8 * s, 2 * s);
+    ctx.fill();
+    // Metal clasp
+    ctx.fillStyle = '#c8a050';
+    ctx.beginPath();
+    ctx.roundRect(18 * s, -80 * s, 6 * s, 3 * s, 1 * s);
+    ctx.fill();
 
     // ── Arms (hanging naturally at sides) ─────────────────
     // Left arm
@@ -257,27 +249,28 @@ export default function Game2() {
     ctx.bezierCurveTo(4 * s, -156 * s, -6 * s, -158 * s, -10 * s, -162 * s);
     ctx.fill();
 
-    // ── Glasses ───────────────────────────────────────────
-    ctx.strokeStyle = '#2a1a0a';
-    ctx.lineWidth = 1.5 * s;
-    ctx.fillStyle = 'rgba(180,220,255,0.45)';
-    // Left lens
-    ctx.beginPath(); ctx.roundRect(-14 * s, -149 * s, 11 * s, 9 * s, 2.5 * s); ctx.fill(); ctx.stroke();
-    // Right lens
-    ctx.beginPath(); ctx.roundRect(3 * s, -149 * s, 11 * s, 9 * s, 2.5 * s); ctx.fill(); ctx.stroke();
-    // Bridge
-    ctx.beginPath(); ctx.moveTo(-3 * s, -145 * s); ctx.lineTo(3 * s, -145 * s); ctx.stroke();
-    // Side temples
-    ctx.beginPath(); ctx.moveTo(-14 * s, -145 * s); ctx.lineTo(-20 * s, -144 * s); ctx.stroke();
-    ctx.beginPath(); ctx.moveTo(14 * s,  -145 * s); ctx.lineTo(20 * s,  -144 * s); ctx.stroke();
-    // Pupils — looking straight forward
-    ctx.fillStyle = '#1a1208';
-    ctx.beginPath(); ctx.arc(-8.5 * s, -145 * s, 2.5 * s, 0, Math.PI * 2); ctx.fill();
-    ctx.beginPath(); ctx.arc(8.5 * s,  -145 * s, 2.5 * s, 0, Math.PI * 2); ctx.fill();
-    // Shine dot
+    // ── Eyes (no glasses) ─────────────────────────────────
+    // Whites
     ctx.fillStyle = 'white';
-    ctx.beginPath(); ctx.arc(-7 * s, -147 * s, 0.8 * s, 0, Math.PI * 2); ctx.fill();
-    ctx.beginPath(); ctx.arc(10 * s, -147 * s, 0.8 * s, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(-8 * s, -145 * s, 5 * s, 6 * s, 0, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.ellipse( 8 * s, -145 * s, 5 * s, 6 * s, 0, 0, Math.PI * 2); ctx.fill();
+    // Irises
+    ctx.fillStyle = '#3a2010';
+    ctx.beginPath(); ctx.arc(-8 * s, -144 * s, 3.5 * s, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.arc( 8 * s, -144 * s, 3.5 * s, 0, Math.PI * 2); ctx.fill();
+    // Pupils
+    ctx.fillStyle = '#0a0806';
+    ctx.beginPath(); ctx.arc(-8 * s, -144 * s, 2 * s, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.arc( 8 * s, -144 * s, 2 * s, 0, Math.PI * 2); ctx.fill();
+    // Shine dots
+    ctx.fillStyle = 'white';
+    ctx.beginPath(); ctx.arc(-6.5 * s, -146 * s, 1 * s, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.arc( 9.5 * s, -146 * s, 1 * s, 0, Math.PI * 2); ctx.fill();
+    // Upper eyelid line
+    ctx.strokeStyle = '#1a0a00';
+    ctx.lineWidth = 1 * s;
+    ctx.beginPath(); ctx.arc(-8 * s, -145 * s, 5 * s, Math.PI, Math.PI * 2); ctx.stroke();
+    ctx.beginPath(); ctx.arc( 8 * s, -145 * s, 5 * s, Math.PI, Math.PI * 2); ctx.stroke();
 
     // Mouth — slight neutral/alert expression
     ctx.strokeStyle = '#8b4a20';
@@ -406,7 +399,7 @@ export default function Game2() {
     const spawnInterval = Math.round(130 - (elapsed / GAME_DURATION) * 70);
     if (g.frame - g.lastSpawn >= spawnInterval) {
       g.lastSpawn = g.frame;
-      const baseSpeed = (2.5 + (elapsed / GAME_DURATION) * 3.5) * 1.4;
+      const baseSpeed = 10; // constant speed throughout (200% faster, no ramp)
       g.items.push({
         id: g.nextId++,
         x: w * (0.1 + Math.random() * 0.8),
@@ -420,8 +413,8 @@ export default function Game2() {
     }
 
     /* update items */
-    // Character body bounds (matches drawStudent with scale = h * 0.00056)
-    const charScale  = h * 0.00056;
+    // Character body bounds (matches drawStudent with scale = h * 0.00168)
+    const charScale  = h * 0.00168;
     const baseY      = h * 0.84;
     const charHalfW  = 38 * charScale;  // standing character body width
     const charTop    = baseY - 170 * charScale; // top of head (standing pose)
