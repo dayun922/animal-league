@@ -332,7 +332,7 @@ export default function Game1() {
               <motion.h1
                 animate={{ scale: [1, 1.03, 1] }}
                 transition={{ repeat: Infinity, duration: 2 }}
-                style={{ fontSize: 38, fontWeight: 900, color: '#fb7185', margin: '0 0 12px', textShadow: '0 4px 20px rgba(251,113,133,0.5)' }}
+                style={{ fontSize: 'clamp(26px, 8vw, 38px)', fontWeight: 900, color: '#fb7185', margin: '0 0 12px', textShadow: '0 4px 20px rgba(251,113,133,0.5)', wordBreak: 'keep-all', textAlign: 'center' }}
               >
                 교수님, 가방 닫으세요
               </motion.h1>
