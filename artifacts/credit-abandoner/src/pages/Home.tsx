@@ -137,9 +137,9 @@ export default function Home() {
         {/* Small score cards */}
         <div className="grid grid-cols-2 gap-3 mb-4">
           {[
-            { id: 'game1', name: '가방 닫기',  score: scores.game1 },
-            { id: 'game2', name: '드랍쉽',     score: scores.game2 },
-            { id: 'game3', name: '커피 연타',  score: scores.game3 },
+            { id: 'game1', name: '교수님 가방',  score: scores.game1 },
+            { id: 'game2', name: '학점 수거함', score: scores.game2 },
+            { id: 'game3', name: '카페인 엔딩', score: scores.game3 },
             { id: 'game4', name: '열공 모드',  score: scores.game4 },
           ].map((game) => (
             <div key={game.id} className="bg-card/80 backdrop-blur-sm p-3 rounded-2xl border border-card-border/50 text-center shadow-sm">

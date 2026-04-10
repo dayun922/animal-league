@@ -134,7 +134,7 @@ export default function Game3() {
               <Coffee className="w-16 h-16 text-amber-600" />
             </div>
             <h1 className="text-4xl font-black mb-1 text-amber-900">커피 수혈 릴레이</h1>
-            <p className="text-amber-600 font-bold mb-4 text-sm">커피 연타</p>
+            <p className="text-amber-600 font-bold mb-4 text-sm">오늘 밤도 카페인 엔딩</p>
             <p className="mb-8 text-amber-700/80 font-medium">10초 동안 커피컵을 미친듯이 누르세요!<br/>학점을 살리려면 카페인이 필요합니다.</p>
             <button 
               data-testid="btn-start"
@@ -226,7 +226,7 @@ export default function Game3() {
             <div className="mb-3">
               <ShareButton
                 payload={{
-                  gameName: '커피 수혈 릴레이 ☕',
+                  gameName: '오늘 밤도 카페인 엔딩 ☕',
                   scoreLabel: `${clicks}번 클릭`,
                   detail: `초당 ${(clicks / 10).toFixed(1)}회`,
                   nickname: player?.nickname ?? '익명',
