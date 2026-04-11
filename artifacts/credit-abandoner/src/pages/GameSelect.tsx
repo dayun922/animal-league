@@ -8,7 +8,7 @@ const GAMES = [
   {
     id: 'game1',
     path: '/game1',
-    name: '교수님, 가방 닫으세요',
+    name: '교수님 가방 닫기',
     desc: '눈보다 빠른 손! 가방이 열리기 전에 닫아라!',
     icon: Briefcase,
     color: 'bg-rose-500',
@@ -18,7 +18,7 @@ const GAMES = [
   {
     id: 'game2',
     path: '/game2',
-    name: '학점 수거함 : 줍지 않으면 F',
+    name: '드랍쉽 게임',
     desc: '택배 상자를 피해 커피를 사수하라!',
     icon: Package,
     color: 'bg-blue-500',
@@ -28,7 +28,7 @@ const GAMES = [
   {
     id: 'game3',
     path: '/game3',
-    name: '오늘 밤도 카페인 엔딩',
+    name: '커피 연타',
     desc: '10초 동안 미친듯이 커피를 들이켜라!',
     icon: Coffee,
     color: 'bg-amber-500',

@@ -332,9 +332,9 @@ export default function Game1() {
               <motion.h1
                 animate={{ scale: [1, 1.03, 1] }}
                 transition={{ repeat: Infinity, duration: 2 }}
-                style={{ fontSize: 'clamp(26px, 8vw, 38px)', fontWeight: 900, color: '#fb7185', margin: '0 0 12px', textShadow: '0 4px 20px rgba(251,113,133,0.5)', wordBreak: 'keep-all', textAlign: 'center' }}
+                style={{ fontSize: 38, fontWeight: 900, color: '#fb7185', margin: '0 0 12px', textShadow: '0 4px 20px rgba(251,113,133,0.5)' }}
               >
-                교수님, 가방 닫으세요
+                교수님 가방 닫기
               </motion.h1>
               <p style={{ color: 'rgba(255,255,255,0.7)', textAlign: 'center', lineHeight: 1.7, marginBottom: 32 }}>
                 교수님이 가방에서 책을 꺼내려는 찰나에<br />
@@ -391,7 +391,7 @@ export default function Game1() {
                     <>
                       <div style={{ fontSize: 28, marginBottom: 4 }}>{tier.emoji}</div>
                       <div style={{ fontSize: 20, fontWeight: 900, color: tier.color, marginBottom: 2 }}>{tier.label}</div>
-                      <div style={{ fontSize: 13, color: '#94a3b8', marginBottom: 16 }}>교수님, 가방 닫으세요</div>
+                      <div style={{ fontSize: 13, color: '#94a3b8', marginBottom: 16 }}>교수님 가방 닫기</div>
                       {reactionMs > 0 ? (
                         <>
                           <div style={{ fontSize: 64, fontWeight: 900, color: '#1e293b', marginBottom: 0, fontFamily: 'monospace' }}>{reactionMs}</div>
@@ -411,7 +411,7 @@ export default function Game1() {
                 <div style={{ marginBottom: 12 }}>
                   <ShareButton
                     payload={{
-                      gameName: '교수님, 가방 닫으세요 ⚡',
+                      gameName: '교수님 가방 닫기 ⚡',
                       scoreLabel: score > 0 ? `${score}점` : '반응 실패',
                       detail: reactionMs > 0 ? `반응속도 ${reactionMs}ms` : undefined,
                       nickname: player?.nickname ?? '익명',

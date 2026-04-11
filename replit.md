@@ -26,30 +26,11 @@ pnpm workspace monorepo using TypeScript. Each package manages its own dependenc
 
 See the `pnpm-workspace` skill for workspace structure, TypeScript setup, and package details.
 
-## Project Structure (Dual Layout)
-
-### Replit 전용 (프리뷰/배포)
-- **`artifacts/credit-abandoner/`** — Replit 아티팩트 워크플로우가 관리; 변경 금지
-- **`artifacts/api-server/`** — Replit API 서버 아티팩트
-
-### VS Code 팀 협업용 독립 패키지 (main codebase)
-- **`frontend/`** — 독립 React+Vite 패키지 (`credit-abandoner-frontend`)
-  - `npm install && npm run dev` 로 로컬 실행 가능
-  - `.env.example` → `.env` 로 복사 후 `VITE_API_BASE_URL` 설정
-- **`backend/`** — 독립 Express 패키지 (`credit-abandoner-backend`)
-  - `npm install && npm run dev` 로 로컬 실행 가능
-  - `.env.example` → `.env` 로 복사 후 `DATABASE_URL` 설정
-
-### 중요 환경 토글
-- `DB_FEATURES_ENABLED` in `frontend/src/contexts/PlayerContext.tsx`
-  - `false` (기본값): 익명 플레이어, 점수 제출 없음, 리더보드 숨김
-  - `true`: DB 연동 전체 활성화 (입력창, 리더보드, 점수 제출)
-
 ## Artifacts
 
 ### 학점 포기자 (Credit Abandoner) — `/`
 - **Kind**: react-vite web app
-- **Dir**: `artifacts/credit-abandoner/` (Replit 프리뷰 전용) / `frontend/` (팀 개발)
+- **Dir**: `artifacts/credit-abandoner/`
 - **Description**: A hilarious Korean university mini-game collection app. "공부 빼고 다 재밌는 사람들의 대결"
 - **Features**:
   - Home lobby with lion mascot, tier badge, and total score
